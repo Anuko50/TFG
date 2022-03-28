@@ -2,10 +2,14 @@
 from distutils.command.config import config
 import execute_MT
 import execute_MTND
-import execute_MTND_VIEJO
 
+
+"""La tabla tendrá tamño:
+    nº filas = nº de transiciones realizadas +1 (o lo longitud de filas tabla)
+    nº columnas = tamaño de la fila con mayor longitud + 2 (para añadir los '#')"""
 def calcularTamanyoTabla(filas_tabla):
-    tamFinal = len(filas_tabla)
+    #tamFinal = len(filas_tabla)
+    tamFinal = 0
     for fila in filas_tabla:
         #Split me separa los elementos de un string en diferentes elementos en una lista, delimitados por espacio
         tamNuevo = len(fila.split())
@@ -18,7 +22,7 @@ def calcularTamanyoTabla(filas_tabla):
 
 def crearTabla(filas_tabla, blanco):
     n = calcularTamanyoTabla(filas_tabla) 
-    tabla = [[0] * n for i in range(n)] #inicializo la tabla
+    tabla = [[0] * n for i in range(len(filas_tabla))] #inicializo la tabla
     fila=0
     for cinta in filas_tabla:
         #Estoy dentro una configuracion dentro de la tabla
@@ -69,8 +73,6 @@ def isNonDeterministic(transitions, config):
         for j in range(i+1, len(transitions) + 1, 1): #lo comparo con los demas
             if(transitions[j][0] == estado_actual):
                 if(transitions[j][2] == simbolo_actual):   
-                    #print('Estado actual = '+ estado_actual + ' ; Lo comparo con estado = ' + transitions[j][0] )
-                    #print('Simbolo actual = '+ simbolo_actual + ' ; Lo comparo con simbolo = ' + transitions[j][2] ) 
                     return True
     return False
 
@@ -80,25 +82,27 @@ def controller(config, tape, transitions):
 
     filas_tabla = [] #lista donde vamos a guardar las filas de la tabla
     reglas_utilizadas_en_orden = [] #Lista donde se van a guardar las reglas de transicion aplicadas en orden de fila
-
+    codigo = 0
     
     if(isNonDeterministic(transitions, config)):
-        #print('es no determinista, aun no he hecho esa parte')
-        #execute_MTND_VIEJO.execute(config, tape, transitions, filas_tabla, reglas_utilizadas_en_orden)
-        execute_MTND.execute(config, tape, transitions, filas_tabla, reglas_utilizadas_en_orden)
+        print("se procede a ejecutar la MTND (no determinista)")
+        codigo = execute_MTND.execute(config, tape, transitions, filas_tabla, reglas_utilizadas_en_orden)
     else:
-        execute_MT.machine(config, tape, transitions, filas_tabla, reglas_utilizadas_en_orden) 
-        #print(filas_tabla)
-        #print(reglas_utilizadas_en_orden)
+        print("se procede a ejecutar la MTD (determinista)")
+        codigo = execute_MT.machine(config, tape, transitions, filas_tabla, reglas_utilizadas_en_orden) 
 
-    blanco = config[3][0]   # simbolo blanco que se va a utilizar
-    tabla = crearTabla(filas_tabla, blanco)
+    if(codigo == -2):
+        print("No se mostrará la tabla ya que la ejecución ha sido interrumpida por looping")
+    else:
+        blanco = config[3][0]   # simbolo blanco que se va a utilizar
+        tabla = crearTabla(filas_tabla, blanco)
+        print("TABLA: ")
+        print(" ")
+        for fila in tabla:
+            print(fila)
+        print(" ")
+        print("REGLAS: ")
+        print(" ")
+        print(reglas_utilizadas_en_orden)
     
-    print("TABLA: ")
-    print(" ")
-    for fila in tabla:
-        print(fila)
-    print(" ")
-    print("REGLAS: ")
-    print(" ")
-    print(reglas_utilizadas_en_orden)
+    

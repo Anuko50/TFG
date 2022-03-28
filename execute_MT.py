@@ -33,7 +33,8 @@ def machine(config, tapes, transitions, filas_tabla, reglas_utilizadas_en_orden)
     
     # Insertar elemento al final de la fila
     q.append(setting)
-
+    tape = setting['tape']
+    
 ###################################################################################################
 ###################################################################################################
     while True:
@@ -42,7 +43,9 @@ def machine(config, tapes, transitions, filas_tabla, reglas_utilizadas_en_orden)
         # Se ha encontrado el estado final
         if (q[0]['current_state'] in config[6]):
             print ("0: Computación terminada y aceptada.")
-            #print (setting)
+            #Hay que introducir la fila de aceptación
+            filaTabla = execute_controller.crearFilaTabla(tape, setting)
+            filas_tabla.append(filaTabla)
             return 0
             
         # La máquina se ha quedado en un bucle
@@ -100,13 +103,14 @@ def machine(config, tapes, transitions, filas_tabla, reglas_utilizadas_en_orden)
                     "counter": q[0]['counter'] - 1
                 }
 
-                filaTabla = execute_controller.crearFilaTabla(tape, setting)
+                
                 
                 #print(transitions[i])
                 #print(setting)
                 #print(setting.get("head_tape"))
                 #print('FILA DE LA TABLA= '+filaTabla)
                 q.append(new_setting) # Se inserta al final de la cinta
+                filaTabla = execute_controller.crearFilaTabla(tape, setting)
                 filas_tabla.append(filaTabla)
                 reglas_utilizadas_en_orden.append(transitions[i])
             

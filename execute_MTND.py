@@ -51,12 +51,13 @@ def getList(nodoActual, filas_tabla, reglas_utilizadas_en_orden):
     while(True):
         f = execute_controller.crearFilaTabla(nodoActual.tape, nodoActual.setting)
         filas_tabla.append(f)
-        reglas_utilizadas_en_orden.append(nodoActual.transition)
+        if(nodoActual.transition is not None):  #el nodo padre su transicion es None
+            reglas_utilizadas_en_orden.append(nodoActual.transition)
         
-        if(nodoActual.NodoPadre is None):
+        if(nodoActual.NodoPadre is None):   #Estamos en el nodo Inicial y recorremos del reves, paramos.
             return 
         
-        nodoActual = nodoActual.NodoPadre
+        nodoActual = nodoActual.NodoPadre   #vamos recorriendo los nodos de abajo a arriba
 
 def isTheEnd(nodo, config, filas_tabla, reglas_utilizadas_en_orden):
     s = nodo.setting
@@ -69,8 +70,9 @@ def isTheEnd(nodo, config, filas_tabla, reglas_utilizadas_en_orden):
     # La máquina se ha quedado en un bucle:
     if (s['counter'] == 0):
         print ("1: Computación terminada de manera forzosa; Se ha quedado en bucle (no aceptación).")
-        getList(nodo, filas_tabla, reglas_utilizadas_en_orden)
-        return True
+        return -2
+        #getList(nodo, filas_tabla, reglas_utilizadas_en_orden)
+        #return True
 
     return False
 
@@ -189,7 +191,11 @@ def execute(config, tapes, transitions, filas_tabla, reglas_utilizadas_en_orden)
         for nodo in nodosNivel:
             nodoActual = nodo
             #1) ver si es nodo de aceptacion o que se ha quedao colgao
-            if (isTheEnd(nodo, config, filas_tabla, reglas_utilizadas_en_orden)):
+            end = isTheEnd(nodo, config, filas_tabla, reglas_utilizadas_en_orden)
+
+            if(end == -2):  #computación interrumpida por looping
+                return -2
+            if (end):   #Cuando devuelve true
                 filas_tabla.reverse()
                 reglas_utilizadas_en_orden.reverse()
                 return 1
