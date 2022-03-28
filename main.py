@@ -1,7 +1,10 @@
 import sys
 import re
 import execute_controller
+import cookLevin
 import turing2utf
+import time
+
 
 #FUNCION PARA LEER LA MT EN TXT
 def read_file(file_name):
@@ -55,7 +58,7 @@ def main():
 
 
 
-# 2º ejecutarla para sacar la tabla
+    # 2º ejecutarla para sacar la tabla
     """ valores de config:
     # linea 1: alfabeto de entrada
     # linea 2: alfabeto de la cinta
@@ -73,15 +76,24 @@ def main():
     tape = []
     config, transitions = read_file(name)
     tape = read_tapes()
-# 3º volcar cada configuración intermedia desde la inicial hasta la final en el tablón.
-# ejecutar la maquina
-    execute_controller.controller(config, tape, transitions)
-# 4º aplicar algoritmo de Cook-Levin
-# 5º contabilizar si el tiempo de estas máquinas es polinomial
+    # 3º volcar cada configuración intermedia desde la inicial hasta la final en el tablón.
+    # ejecutar la maquina
+    tabla, reglas_en_orden = execute_controller.controller(config, tape, transitions)
+
+    if(tabla is not None):
+        inicio = time.time()
+
+        #TODO: 
+        # 4º aplicar algoritmo de Cook-Levin
+        #Aplicamos Cook-Levin
+        cookLevin.apply(tabla, reglas_en_orden)
+        
+        # 5º contabilizar si el tiempo de estas máquinas es polinomial
+        fin = time.time()
+        print("\nTIEMPO DE EJECUCIÓN TOTAL: ")
+        print(fin - inicio)
     
- 
-
-
+        
 
 
 

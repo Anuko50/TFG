@@ -93,16 +93,16 @@ def controller(config, tape, transitions):
 
     if(codigo == -2):
         print("No se mostrará la tabla ya que la ejecución ha sido interrumpida por looping")
+        return None, None
     else:
         blanco = config[3][0]   # simbolo blanco que se va a utilizar
         tabla = crearTabla(filas_tabla, blanco)
-        print("TABLA: ")
-        print(" ")
+        print("\nTABLA: \n")
         for fila in tabla:
             print(fila)
-        print(" ")
-        print("REGLAS: ")
-        print(" ")
+        print("\nREGLAS: \n")
         print(reglas_utilizadas_en_orden)
+    
+        return tabla, reglas_utilizadas_en_orden
     
     
