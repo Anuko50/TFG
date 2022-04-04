@@ -20,9 +20,12 @@ def calcularTamanyoTabla(filas_tabla):
     
     return tamFinal +2  # el +2 contempla los "#"
 
+# TODO: 
+# ver si tiene el simbolo "#" y cambiarlo en consecuencia
 def crearTabla(filas_tabla, blanco):
     n = calcularTamanyoTabla(filas_tabla) 
     tabla = [[0] * n for i in range(len(filas_tabla))] #inicializo la tabla
+    #tabla = [[0] * n for i in range(n)] #inicializo la tabla
     fila=0
     for cinta in filas_tabla:
         #Estoy dentro una configuracion dentro de la tabla
@@ -42,6 +45,18 @@ def crearTabla(filas_tabla, blanco):
     
     return tabla
 
+
+def crearConfiguracionInicial(tape):
+    filaTabla="# "
+    cont = 0
+    for j in tape:
+        if(0 == cont):
+            filaTabla += 'q0 '
+        filaTabla +=  j+ ' '
+        cont = cont + 1
+    
+    filaTabla += '# '
+    return filaTabla
 
 #Crear una fila de la tabla para el algoritmo desde la cinta actual y el setting
 def crearFilaTabla(tape, setting):
@@ -97,11 +112,12 @@ def controller(config, tape, transitions):
     else:
         blanco = config[3][0]   # simbolo blanco que se va a utilizar
         tabla = crearTabla(filas_tabla, blanco)
-        print("\nTABLA: \n")
+        """ print("\nTABLA: \n")
         for fila in tabla:
             print(fila)
         print("\nREGLAS: \n")
         print(reglas_utilizadas_en_orden)
+        print() """
     
         return tabla, reglas_utilizadas_en_orden
     

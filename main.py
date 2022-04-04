@@ -83,10 +83,15 @@ def main():
     if(tabla is not None):
         inicio = time.time()
 
-        #TODO: 
         # 4º aplicar algoritmo de Cook-Levin
+        configuracionInicial = execute_controller.crearConfiguracionInicial(tape)
+        estados = config[4]
+        alfabetoCinta = config[2]
+        estadosFinales = config[6]
+        #print(configuracionInicial)
+        print("\n APLICACION DE COOK-LEVIN:")
         #Aplicamos Cook-Levin
-        cookLevin.apply(tabla, reglas_en_orden)
+        cookLevin.apply(tabla, estados, alfabetoCinta, configuracionInicial)
         
         # 5º contabilizar si el tiempo de estas máquinas es polinomial
         fin = time.time()
