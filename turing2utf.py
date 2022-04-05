@@ -68,10 +68,10 @@ class Jflap2Utfpr(object):
 		self.finalStates = set()
 		self.transitions = set()    #aqui va a haber un conjunto de transiciones
 		self.singleTape = False
+		
 
-    #CAMBIO: quiero que me devuelva un objeto de esta clase.
-    # No me deja hacer return xd xd xd xd xd mis muertos
-	def convert(self, inputFile, outputFile, blankSymbol = 'B', alphabet = None):
+    #Añadido: hastag, quiero que no se use a la hora de la creación de la tabla
+	def convert(self, inputFile, outputFile, blankSymbol = 'B', alphabet = None, hastagSymbol = '#'):
 		try: 
 			xmldoc = ET.parse(inputFile)
 		except FileNotFoundError:
@@ -111,6 +111,18 @@ class Jflap2Utfpr(object):
 				if t.find("write" + tapeXPath).text is not None:
 					self.tapeSymbols.add(t.find("write" + tapeXPath).text)
 		for s in self.tapeSymbols:
+			#TODO:
+			if s == hastagSymbol:	#si el # está en el alfabeto de la cinta entonces está en el alfabeto
+				newSymbol=''
+				for c in ascii_uppercase:
+					if c not in self.tapeSymbols:
+						newSymbol = c
+						break
+				self.tapeSymbols.remove('#')
+				self.alphabet.remove('#')
+				self.tapeSymbols.add(newSymbol)
+				self.alphabet.add(newSymbol)
+				print("El símbolo # es un símbolo protegido, se va a realizar un cambio a " + newSymbol)
 			if s == blankSymbol:
 				oldBlankSymbol = blankSymbol
 				for c in ascii_uppercase:
