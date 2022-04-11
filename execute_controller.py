@@ -45,7 +45,11 @@ def crearTabla(filas_tabla, blanco):
         fila+=1
         if fila >= n:
             break
-    #meto desde donde me he quedao la última fila
+    #meto desde donde me he quedao la última fila si la fila no es mayor que n
+    if fila < n:
+        filaUltima=['#'] + meter + ['#']
+        for fila in range(fila, n, 1):
+            tabla[fila] = filaUltima
     return tabla
 
 
