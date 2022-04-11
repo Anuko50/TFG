@@ -93,7 +93,7 @@ def generarProposicionesPotenciales(tabla, estados, alfabetoCinta):
         for celda in tabla:
             proposicionesFila = []
             for valor in posiblesValores:
-                proposicion = 'X' + str(i) + str(j) + "_" + valor
+                proposicion = 'X' +  "_" +str(i) + "_" + str(j) + "_" + valor
                 proposicionesFila.append(proposicion)
             proposicionesPotenciales.append(proposicionesFila)
             j += 1
@@ -112,14 +112,7 @@ def generarPhiStart(tabla, proposicionesPotenciales, configuracionInicial):
     """ Φstart = x11# ∧ x12q0 ∧ x13w1 ∧ x14w2 ∧
     · · · ∧ x1(n+2)wn ∧ x1(n+3)B ∧ x1(n+4)B ∧ 
     · · · ∧ x1(nk−1)B ∧ x1(nk)# """
-    phiStart = ""
-    cont=0
-    fila = tabla[0] #Solo la primera fila de la tabla
-    for valor in configuracionInicial:
-        if(fila[cont] == valor):
-            phiStart.append()
-        cont +=1
-    return " "
+    
 
 def generarPhiAccept():
     return " "
@@ -134,15 +127,16 @@ def generarPhiMove():
 def apply(tabla, estados, alfabetoCinta, configuracionInicial):
     
     proposicionesPotenciales = generarProposicionesPotenciales(tabla, estados, alfabetoCinta)
-    print(proposicionesPotenciales)
+    #phi_start = generarPhiStart(tabla, proposicionesPotenciales, configuracionInicial)
+    #print(phi_start)
     #de las proposiciones de arriba se genera un AND que contiene sólo algunas 
     #de las variables generadas por la fila 1
-    phi_start = generarPhiStart(tabla, proposicionesPotenciales, configuracionInicial)   
-    phi_accept = generarPhiAccept()
+    #phi_start = generarPhiStart(tabla, proposicionesPotenciales, configuracionInicial)   
+    """ phi_accept = generarPhiAccept()
     phi_cell = generarPhiCell()
     phi_move = generarPhiMove()
 
     phi = phi_start + " AND " + phi_accept + " AND " + phi_cell + " AND " + phi_move
 
-    return phi
+    return phi """
 

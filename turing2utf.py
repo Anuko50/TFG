@@ -111,22 +111,20 @@ class Jflap2Utfpr(object):
 				if t.find("write" + tapeXPath).text is not None:
 					self.tapeSymbols.add(t.find("write" + tapeXPath).text)
 		for s in self.tapeSymbols:
-			#TODO:
-			if s == hastagSymbol:	#si el # está en el alfabeto de la cinta entonces está en el alfabeto
+			#añadido
+			if s == hastagSymbol:	#Si "#" está en el alfabeto, lo cambiamos
 				newSymbol=''
 				for c in ascii_uppercase:
 					if c not in self.tapeSymbols:
 						newSymbol = c
 						break
-				self.tapeSymbols.remove('#')
-				self.alphabet.remove('#')
+				self.tapeSymbols.remove(hastagSymbol)
 				self.tapeSymbols.add(newSymbol)
-				self.alphabet.add(newSymbol)
-				print("El símbolo # es un símbolo protegido, se va a realizar un cambio a " + newSymbol)
+				print("El símbolo # es un símbolo protegido, se va a realizar un cambio de simbolo, '#' se cambia por \'" + newSymbol + "\'")
 			if s == blankSymbol:
 				oldBlankSymbol = blankSymbol
-				for c in ascii_uppercase:
-					if c not in self.tapeSymbols:
+				for c in ascii_uppercase:	#se añade comprobación para que no se ponga el simbolo hastag
+					if c not in self.tapeSymbols and c is not hastagSymbol:
 						blankSymbol = c
 						break
 				print("Símbolo elegido para representar el blanco (" + oldBlankSymbol + ") se utilizó para otros fines en la máquina. El símbolo del blanco ha sido sustituido por " + blankSymbol + ".")
