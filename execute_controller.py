@@ -8,7 +8,7 @@ import execute_MTND
     nº filas = nº de transiciones realizadas +1 (o lo longitud de filas tabla)
     nº columnas = tamaño de la fila con mayor longitud + 2 (para añadir los '#')"""
 def calcularTamanyoTabla(filas_tabla):
-    #tamFinal = len(filas_tabla)
+    tamFinal = len(filas_tabla)
     tamFinal = 0
     for fila in filas_tabla:
         #Split me separa los elementos de un string en diferentes elementos en una lista, delimitados por espacio
@@ -24,14 +24,15 @@ def calcularTamanyoTabla(filas_tabla):
 # ver si tiene el simbolo "#" y cambiarlo en consecuencia
 def crearTabla(filas_tabla, blanco):
     n = calcularTamanyoTabla(filas_tabla) 
-    tabla = [[0] * n for i in range(len(filas_tabla))] #inicializo la tabla
-    #tabla = [[0] * n for i in range(n)] #inicializo la tabla
+    #tabla = [[0] * n for i in range(len(filas_tabla))] #inicializo la tabla
+    tabla = [[blanco] * n for i in range(n)] #inicializo la tabla todo a simbolos blancos
+    print(tabla)
     fila=0
     for cinta in filas_tabla:
         #Estoy dentro una configuracion dentro de la tabla
         meter = cinta.split()
         contMeter=0
-        #print(meter)
+        
         for i in range(0, n ,1):
             if (i==0 or i==n-1):
                 tabla[fila][i] = '#'
@@ -42,7 +43,9 @@ def crearTabla(filas_tabla, blanco):
                 else:
                     tabla[fila][i] = blanco
         fila+=1
-    
+        if fila >= n:
+            break
+    #meto desde donde me he quedao la última fila
     return tabla
 
 
@@ -112,9 +115,10 @@ def controller(config, tape, transitions):
     else:
         blanco = config[3][0]   # simbolo blanco que se va a utilizar
         tabla = crearTabla(filas_tabla, blanco)
-        """ print("\nTABLA: \n")
+        print("\nTABLA: \n")
         for fila in tabla:
             print(fila)
+        """
         print("\nREGLAS: \n")
         print(reglas_utilizadas_en_orden)
         print() """

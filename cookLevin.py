@@ -112,7 +112,7 @@ def generarPhiStart(tabla, proposicionesPotenciales, configuracionInicial):
     """ Φstart = x11# ∧ x12q0 ∧ x13w1 ∧ x14w2 ∧
     · · · ∧ x1(n+2)wn ∧ x1(n+3)B ∧ x1(n+4)B ∧ 
     · · · ∧ x1(nk−1)B ∧ x1(nk)# """
-    
+    return " "
 
 def generarPhiAccept():
     return " "

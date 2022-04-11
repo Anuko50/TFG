@@ -113,14 +113,14 @@ class Jflap2Utfpr(object):
 		for s in self.tapeSymbols:
 			#añadido
 			if s == hastagSymbol:	#Si "#" está en el alfabeto, lo cambiamos
-				newSymbol=''
+				newHastagSymbol=''
 				for c in ascii_uppercase:
 					if c not in self.tapeSymbols:
-						newSymbol = c
+						newHastagSymbol = c
 						break
 				self.tapeSymbols.remove(hastagSymbol)
-				self.tapeSymbols.add(newSymbol)
-				print("El símbolo # es un símbolo protegido, se va a realizar un cambio de simbolo, '#' se cambia por \'" + newSymbol + "\'")
+				self.tapeSymbols.add(newHastagSymbol)
+				print("El símbolo # es un símbolo protegido, se va a realizar un cambio de simbolo, '#' se cambia por \'" + newHastagSymbol + "\'")
 			if s == blankSymbol:
 				oldBlankSymbol = blankSymbol
 				for c in ascii_uppercase:	#se añade comprobación para que no se ponga el simbolo hastag
@@ -145,10 +145,14 @@ class Jflap2Utfpr(object):
 					tapeXPath = "[@tape='" + str(i) + "']"
 				if t.find("read" + tapeXPath).text is not None:
 					movement.currentTapeSymbol = t.find("read" + tapeXPath).text
+					if movement.currentTapeSymbol is hastagSymbol:
+						movement.currentTapeSymbol = newHastagSymbol
 				else:
 					movement.currentTapeSymbol = self.blankSymbol
 				if t.find("write" + tapeXPath).text is not None:
 					movement.newTapeSymbol = t.find("write" + tapeXPath).text
+					if movement.newTapeSymbol is hastagSymbol:
+						movement.newTapeSymbol = newHastagSymbol
 				else:
 					movement.newTapeSymbol = self.blankSymbol
 				movement.headDirection = t.find("move" + tapeXPath).text
