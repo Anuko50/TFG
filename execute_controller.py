@@ -9,13 +9,10 @@ import execute_MTND
     nº columnas = tamaño de la fila con mayor longitud + 2 (para añadir los '#')"""
 def calcularTamanyoTabla(filas_tabla):
     tamFinal = len(filas_tabla)
-    tamFinal = 0
     for fila in filas_tabla:
         #Split me separa los elementos de un string en diferentes elementos en una lista, delimitados por espacio
         tamNuevo = len(fila.split())
         if  tamNuevo > tamFinal : 
-            #print('tamaño fila: '+ str(tamNuevo))
-            #print('tamaño que estba: '+ str(tamFinal))
             tamFinal = tamNuevo
     
     return tamFinal +2  # el +2 contempla los "#"
@@ -31,6 +28,7 @@ def crearTabla(filas_tabla, blanco):
         #Estoy dentro una configuracion dentro de la tabla
         meter = cinta.split()
         contMeter=0
+        filaUltima=[]
         
         for i in range(0, n ,1):
             if (i==0 or i==n-1):
@@ -41,12 +39,12 @@ def crearTabla(filas_tabla, blanco):
                     contMeter += 1
                 else:
                     tabla[fila][i] = blanco
+            filaUltima = tabla[fila]
         fila+=1
         if fila >= n:
             break
     #meto desde donde me he quedao la última fila si la fila no es mayor que n
     if fila < n:
-        filaUltima=['#'] + meter + ['#']
         for fila in range(fila, n, 1):
             tabla[fila] = filaUltima
     return tabla, n

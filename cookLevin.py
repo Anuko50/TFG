@@ -142,6 +142,7 @@ def generarPhiAccept(tabla, estadosFinales, n):
     #en alguna celda. (QUE HAYA ESTADO FINAL EN ALGUNA CELDA, LA QUE SEA)
     literalesFinales = crearLiteralesFinales(estadosFinales, n) 
     tam = len(literalesFinales)
+    loCumple=False
     fi_Accept=""
     fi_Accept_valores=""
 
@@ -150,13 +151,31 @@ def generarPhiAccept(tabla, estadosFinales, n):
             fi_Accept += literalesFinales[i] + ' OR '
         else:
              fi_Accept += literalesFinales[i]
+    
+    for i in range(0,n,1):
+        for j in range(0,n,1):
+            celda = tabla[i][j]
+            if((j == i) and (j == n-1)):
+                if(loContiene(estadosFinales, celda)):
+                    fi_Accept_valores += 'TRUE '
+                    loCumple = True
+                else:
+                    fi_Accept_valores += 'FALSE '
+            else:
+                if(loContiene(estadosFinales, celda)):
+                    fi_Accept_valores += 'TRUE OR '
+                    loCumple = True
+                else:
+                    fi_Accept_valores += 'FALSE OR '
+    return fi_Accept, fi_Accept_valores, loCumple
 
-    for fila in tabla:
+
+    """ for fila in tabla:
         for celda in fila:
             if(loContiene(estadosFinales, celda)):
                 fi_Accept_valores += 'TRUE OR '
             else:
-                fi_Accept_valores += 'FALSE OR '
+                fi_Accept_valores += 'FALSE OR ' """
     
     return fi_Accept, fi_Accept_valores
 
@@ -178,11 +197,17 @@ def apply(n, tabla, estados, alfabetoCinta, configuracionInicial, estadosFinales
     print(phi_start)
     print(phi_start_valores)
     
-    #phi_accept, phi_accept_valores = generarPhiAccept(tabla, estadosFinalesEnBonito(estadosFinales), n)
-    #print()
-    #print("PHI_ACCEPT:")
-    #print(phi_accept)
-    #print(phi_accept_valores)
+    phi_accept, phi_accept_valores, loCumpleAccept = generarPhiAccept(tabla, estadosFinalesEnBonito(estadosFinales), n)
+    print()
+    print("PHI_ACCEPT:")
+    print(phi_accept)
+    print(phi_accept_valores)
+    if(loCumpleAccept):
+        print('SI tiene un estado final')
+    else:
+        print('NO tiene un estado final')
+    
+    print(estadosFinales)
 
     #de las proposiciones de arriba se genera un AND que contiene sólo algunas 
     #de las variables generadas por la fila 1
