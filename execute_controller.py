@@ -26,7 +26,6 @@ def crearTabla(filas_tabla, blanco):
     n = calcularTamanyoTabla(filas_tabla) 
     #tabla = [[0] * n for i in range(len(filas_tabla))] #inicializo la tabla
     tabla = [[blanco] * n for i in range(n)] #inicializo la tabla todo a simbolos blancos
-    print(tabla)
     fila=0
     for cinta in filas_tabla:
         #Estoy dentro una configuracion dentro de la tabla
@@ -50,19 +49,27 @@ def crearTabla(filas_tabla, blanco):
         filaUltima=['#'] + meter + ['#']
         for fila in range(fila, n, 1):
             tabla[fila] = filaUltima
-    return tabla
+    return tabla, n
 
 
-def crearConfiguracionInicial(tape):
-    filaTabla="# "
-    cont = 0
-    for j in tape:
-        if(0 == cont):
-            filaTabla += 'q0 '
-        filaTabla +=  j+ ' '
-        cont = cont + 1
+def crearConfiguracionInicial(entrada, estadoInicial, n, blanco):
+    filaTabla=[]
+    estado = 'q'+estadoInicial 
+    tam = len(entrada)+2 #le sumo dos porque la j la posicion 0 y 1 son espacios ocupados
     
-    filaTabla += '# '
+    for j in range(0,n,1):
+        if(j <tam):
+            if(j == 1):
+                filaTabla.append(estado)
+            elif(j == 0):
+                filaTabla.append('#')
+            else:
+                filaTabla.append(entrada[j-2])
+        elif (j == n-1):
+            filaTabla.append('#')
+        else:
+            filaTabla.append(blanco)
+    
     return filaTabla
 
 #Crear una fila de la tabla para el algoritmo desde la cinta actual y el setting
@@ -118,7 +125,7 @@ def controller(config, tape, transitions):
         return None, None
     else:
         blanco = config[3][0]   # simbolo blanco que se va a utilizar
-        tabla = crearTabla(filas_tabla, blanco)
+        tabla , n = crearTabla(filas_tabla, blanco)
         print("\nTABLA: \n")
         for fila in tabla:
             print(fila)
@@ -127,6 +134,6 @@ def controller(config, tape, transitions):
         print(reglas_utilizadas_en_orden)
         print() """
     
-        return tabla, reglas_utilizadas_en_orden
+        return n, tabla, reglas_utilizadas_en_orden
     
     

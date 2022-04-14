@@ -78,20 +78,19 @@ def main():
     tape = read_tapes()
     # 3º volcar cada configuración intermedia desde la inicial hasta la final en el tablón.
     # ejecutar la maquina
-    tabla, reglas_en_orden = execute_controller.controller(config, tape, transitions)
+    n, tabla, reglas_en_orden = execute_controller.controller(config, tape, transitions)
 
     if(tabla is not None):
         inicio = time.time()
-
         # 4º aplicar algoritmo de Cook-Levin
-        configuracionInicial = execute_controller.crearConfiguracionInicial(tape)
+        configuracionInicial = execute_controller.crearConfiguracionInicial(sys.argv[2], config[5][0], n, config[3][0])
         estados = config[4]
         alfabetoCinta = config[2]
         estadosFinales = config[6]
         #print(configuracionInicial)
         print("\n APLICACION DE COOK-LEVIN:")
         #Aplicamos Cook-Levin
-        cookLevin.apply(tabla, estados, alfabetoCinta, configuracionInicial)
+        cookLevin.apply(n, tabla, estados, alfabetoCinta, configuracionInicial, estadosFinales)
         
         # 5º contabilizar si el tiempo de estas máquinas es polinomial
         fin = time.time()

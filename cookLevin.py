@@ -22,28 +22,7 @@
     
     return fi_start
 
-def estadosFinalesEnBonito(estadosFinales):
-    estadosFinalesBonitos = []
-    for estado in estadosFinales:
-        estadosFinalesBonitos.append('q'+ str(estado))
-    return estadosFinalesBonitos
 
-def loContiene(estadosFinales, celda):
-    for q in estadosFinales:
-        if(q == celda):
-            return True
-    return False
-
-def createFiAccept(tabla, estadosFinales):
-    #asegura que qaccept aparezca
-    #en alguna celda. (QUE HAYA ESTADO FINAL EN ALGUNA CELDA, LA QUE SEA) 
-    fi_Accept=""
-    for fila in tabla:
-        for celda in fila:
-            if(loContiene(estadosFinales, celda)):
-                fi_Accept += 'TRUE'
-    
-    return fi_Accept
 
 def crearNuevaFila(fila, regla):
     nuevaFila=""
@@ -70,6 +49,7 @@ def createFiMove(tabla, reglasEnOrden):
         filaDeberia = crearNuevaFila(fila, regla)
  """
 
+from distutils.command.config import config
 from turtle import pos
 
 
@@ -103,19 +83,82 @@ def generarProposicionesPotenciales(tabla, estados, alfabetoCinta):
     
     return proposicionesPotenciales
 
+####################################################################################################
+####################################     PHI_START    ##############################################
+####################################################################################################
 
-def generarPhiStart(tabla, proposicionesPotenciales, configuracionInicial):
-    """ Eso se refleja en esta conjunción de
-    variables correspondientes a la fila 1 que estarán a verdadero las
-    correspondientes al símbolo contenido en cada una de ellas. """
+def generarPhiStart(n, tabla, proposicionesPotenciales, configuracionInicial):
+    phiStart=""
+    phiStart_valores=""
 
-    """ Φstart = x11# ∧ x12q0 ∧ x13w1 ∧ x14w2 ∧
-    · · · ∧ x1(n+2)wn ∧ x1(n+3)B ∧ x1(n+4)B ∧ 
-    · · · ∧ x1(nk−1)B ∧ x1(nk)# """
-    return " "
+    for j in range(0,n,1):
+        if(j < n-1):
+            phiStart += "X_1_"+ str(j+1)+"_"+configuracionInicial[j]+" AND "
+        else:
+            phiStart += "X_1_"+ str(j+1)+"_"+configuracionInicial[j]
+    
+    for j in range(0,n,1):
+        if(j < n-1):
+            if(configuracionInicial[j] == tabla[0][j]):
+                phiStart_valores += "TRUE AND "
+            else:
+                phiStart_valores += "FALSE AND "
+        else:
+            if(configuracionInicial[j] == tabla[0][j]):
+                phiStart_valores += "TRUE "
+            else:
+                phiStart_valores += "FALSE "
 
-def generarPhiAccept():
-    return " "
+    return phiStart, phiStart_valores
+
+
+####################################################################################################
+####################################     PHI_ACCEPT   ##############################################
+####################################################################################################
+
+def estadosFinalesEnBonito(estadosFinales):
+    estadosFinalesBonitos = []
+    for estado in estadosFinales:
+        estadosFinalesBonitos.append('q'+ str(estado))
+    return estadosFinalesBonitos
+
+def loContiene(estadosFinales, celda):
+    for q in estadosFinales:
+        if(q == celda):
+            return True
+    return False
+
+def crearLiteralesFinales(estadosFinales, n):
+    literalesFinales = []
+    for i in range(1,n-1,1):
+        for j in range(1,n-1,1):
+            for q in estadosFinales:
+                literal = 'X'+str(i)+'_'+str(j)+'_'+q
+                literalesFinales.append(literal)
+    return literalesFinales
+
+def generarPhiAccept(tabla, estadosFinales, n):
+    #asegura que qaccept aparezca
+    #en alguna celda. (QUE HAYA ESTADO FINAL EN ALGUNA CELDA, LA QUE SEA)
+    literalesFinales = crearLiteralesFinales(estadosFinales, n) 
+    tam = len(literalesFinales)
+    fi_Accept=""
+    fi_Accept_valores=""
+
+    for i in range(0,tam,1):
+        if(i< tam-1):
+            fi_Accept += literalesFinales[i] + ' OR '
+        else:
+             fi_Accept += literalesFinales[i]
+
+    for fila in tabla:
+        for celda in fila:
+            if(loContiene(estadosFinales, celda)):
+                fi_Accept_valores += 'TRUE OR '
+            else:
+                fi_Accept_valores += 'FALSE OR '
+    
+    return fi_Accept, fi_Accept_valores
 
 def generarPhiCell():
     return " "
@@ -124,11 +167,23 @@ def generarPhiMove():
     return " "
 
 
-def apply(tabla, estados, alfabetoCinta, configuracionInicial):
+def apply(n, tabla, estados, alfabetoCinta, configuracionInicial, estadosFinales):
     
+    print(configuracionInicial)
     proposicionesPotenciales = generarProposicionesPotenciales(tabla, estados, alfabetoCinta)
-    #phi_start = generarPhiStart(tabla, proposicionesPotenciales, configuracionInicial)
-    #print(phi_start)
+    #print(proposicionesPotenciales)
+    phi_start, phi_start_valores = generarPhiStart(n, tabla, proposicionesPotenciales, configuracionInicial)
+    print()
+    print("PHI_START:")
+    print(phi_start)
+    print(phi_start_valores)
+    
+    #phi_accept, phi_accept_valores = generarPhiAccept(tabla, estadosFinalesEnBonito(estadosFinales), n)
+    #print()
+    #print("PHI_ACCEPT:")
+    #print(phi_accept)
+    #print(phi_accept_valores)
+
     #de las proposiciones de arriba se genera un AND que contiene sólo algunas 
     #de las variables generadas por la fila 1
     #phi_start = generarPhiStart(tabla, proposicionesPotenciales, configuracionInicial)   
