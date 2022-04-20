@@ -61,8 +61,7 @@ def estadosEnBonito(estados):
 
 def generarProposicionesPotenciales(tabla, estados, alfabetoCinta):
     #se genera a partir de cada casilla del tablón
-    estados = estadosEnBonito(estados)  #lo sobreescribo, qué más da
-    alfabetoCinta = alfabetoCinta
+    #alfabetoCinta = alfabetoCinta
     posiblesValores = estados + alfabetoCinta
     posiblesValores.append('#')
     proposicionesPotenciales = [] 
@@ -167,47 +166,137 @@ def generarPhiAccept(tabla, estadosFinales, n):
                     loCumple = True
                 else:
                     fi_Accept_valores += 'FALSE OR '
+
     return fi_Accept, fi_Accept_valores, loCumple
 
 
-    """ for fila in tabla:
-        for celda in fila:
-            if(loContiene(estadosFinales, celda)):
-                fi_Accept_valores += 'TRUE OR '
-            else:
-                fi_Accept_valores += 'FALSE OR ' """
-    
-    return fi_Accept, fi_Accept_valores
+####################################################################################################
+####################################     PHI_CELL     ##############################################
+####################################################################################################
 
-def generarPhiCell():
-    return " "
+def generarPrimeraParte(i,j,valor,valoresPosibles):
+    #como minimo cada celda debe tener un valor.
+    primeraParte = "[ ("
+    primeraParteValor = "[ ("
+    estaBien = False
+    tam = len(valoresPosibles)
+    for e in range(0,tam,1):
+        if(e < tam-1):
+            primeraParte += "X_" + str(i) +"_" + str(j) + "_" + valoresPosibles[e] + " OR " 
+            if(valoresPosibles[e] == valor):
+                estaBien = True
+                primeraParteValor += "TRUE OR "
+            else:
+                primeraParteValor += "FALSE OR "
+        else:
+            primeraParte += "X_" + str(i) +"_" + str(j) + "_" + valoresPosibles[e] + " ) "
+            if(valoresPosibles[e] == valor):
+                estaBien = True
+                primeraParteValor += "TRUE ) "
+            else:
+                primeraParteValor += "FALSE ) "
+
+    return primeraParte, primeraParteValor, estaBien
+
+def generarSegundaParte(i,j,valor,valoresPosibles):
+    segundaParte = "( " 
+    segundaParteValor = "( " 
+    estaBien = True
+    
+    #no pueden haber dos valores simultaneamente
+    tam = len(valoresPosibles)
+    for index in range(0, tam-1, 1):
+        numNext = index + 1
+        s = valoresPosibles[index]
+        for numNext in range(numNext, tam, 1):
+            t = valoresPosibles[numNext]
+            #print("s = " +s+ " t =" + t + " index = "+ str(index) + " numNext = "+ str(numNext))
+            if(t != s):
+                valorS = (s == valor)
+                valorT = (t == valor)
+
+                if(valorS == valorT == True):
+                    #print("Segunda parte: falla con valores i="+str(i)+" j="+str(j)+" valor en la tabla="+valor)
+                    #print("valor de s = "+ s + "valor de t = "+ t)
+                    estaBien = False
+
+                if index < tam-2:
+                    segundaParte += " NOT ("+ "X_"+ str(i)+"_"+str(j)+"_"+s + ") OR  NOT ( " + "X_"+ str(i)+"_"+str(j)+"_"+ t +")  ) AND ( "
+                    segundaParteValor += " NOT ("+ str(valorS) + ") OR  NOT ( " + str(valorT) +")  ) AND ( "
+                else:
+                    segundaParte += " NOT ("+ "X_"+ str(i)+"_"+str(j)+"_"+s + ") OR  NOT ( " + "X_"+ str(i)+"_"+str(j)+"_"+ t +")  ) ]"
+                    segundaParteValor += " NOT ("+ str(valorS) + ") OR  NOT ( " + str(valorT) +")  ) ]"
+    
+    return segundaParte, segundaParteValor, estaBien
+
+def generarPhiCell(tabla, n, estados, alfabetoCinta):
+    phi_cell=""
+    phi_cell_valores = ""
+    valoresPosibles = estados + alfabetoCinta + ["#"]    #conjunto de valores posibles (en la nomenclatura de la asignatura se llama "C")
+    
+    for i in range(0,n,1):
+        for j in range(0,n,1):
+            primeraParte, primeraParteValor, estaBien = generarPrimeraParte(i+1,j+1,tabla[i][j],valoresPosibles)
+            #print("PRIMERA PARTE DE LA FORMULA, ESTABIEN = " + str(estaBien))
+            phi_cell += primeraParte + " AND "
+            phi_cell_valores += primeraParteValor + " AND "
+            segundaParte, segundaParteValor, estaBien = generarSegundaParte(i+1,j+1,tabla[i][j],valoresPosibles)
+            #print("SEGUNDA PARTE DE LA FORMULA, ESTABIEN = " + str(estaBien))
+            if( j == n-1 and i == n-1): #Estoy en el ultimo caso
+                phi_cell += segundaParte 
+                phi_cell_valores += segundaParteValor 
+                
+            else:
+                phi_cell += segundaParte + " AND "
+                phi_cell_valores += segundaParteValor + " AND "
+
+    return  phi_cell, phi_cell_valores
+
+
+####################################################################################################
+####################################     PHI_MOVE     ##############################################
+####################################################################################################
 
 def generarPhiMove():
     return " "
 
+####################################################################################################
+####################################     APLICACION:  ##############################################
+####################################################################################################
 
 def apply(n, tabla, estados, alfabetoCinta, configuracionInicial, estadosFinales):
     
     print(configuracionInicial)
+    #Pongo los estados en el formato adecuado:
+    estados = estadosEnBonito(estados) 
     proposicionesPotenciales = generarProposicionesPotenciales(tabla, estados, alfabetoCinta)
     #print(proposicionesPotenciales)
     phi_start, phi_start_valores = generarPhiStart(n, tabla, proposicionesPotenciales, configuracionInicial)
     print()
     print("PHI_START:")
     print(phi_start)
+    print("PHI_START_VALORES ASIGNADOS:")
     print(phi_start_valores)
     
     phi_accept, phi_accept_valores, loCumpleAccept = generarPhiAccept(tabla, estadosFinalesEnBonito(estadosFinales), n)
     print()
     print("PHI_ACCEPT:")
     print(phi_accept)
+    print("PHI_ACCEPT_VALORES ASIGNADOS:")
     print(phi_accept_valores)
-    if(loCumpleAccept):
-        print('SI tiene un estado final')
-    else:
-        print('NO tiene un estado final')
-    
-    print(estadosFinales)
+
+    phi_cell, phi_cell_valores = generarPhiCell(tabla, n, estados, alfabetoCinta)
+    print()
+    print("PHI_CELL:")
+    print(phi_cell)
+    print("PHI_CELL_VALORES ASIGNADOS:")
+    print(phi_cell_valores)
+    #  if(loCumpleAccept):
+    #       print('SI tiene un estado final')
+    #   else:
+    #       print('NO tiene un estado final')
+    #   
+    #   print(estadosFinales)
 
     #de las proposiciones de arriba se genera un AND que contiene sólo algunas 
     #de las variables generadas por la fila 1
