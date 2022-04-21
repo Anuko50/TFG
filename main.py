@@ -90,7 +90,7 @@ def main():
         #print(configuracionInicial)
         print("\n APLICACION DE COOK-LEVIN:")
         #Aplicamos Cook-Levin
-        cookLevin.apply(n, tabla, estados, alfabetoCinta, configuracionInicial, estadosFinales)
+        cookLevin.apply(n, tabla, estados, alfabetoCinta, configuracionInicial, estadosFinales, reglas_en_orden, transitions)
         
         # 5º contabilizar si el tiempo de estas máquinas es polinomial
         fin = time.time()
