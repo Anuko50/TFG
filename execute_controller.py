@@ -125,8 +125,8 @@ def controller(config, tape, transitions):
         blanco = config[3][0]   # simbolo blanco que se va a utilizar
         tabla , n = crearTabla(filas_tabla, blanco)
         print("\nTABLA: \n")
-        for fila in tabla:
-            print(fila)
+        for i in range(0,n,1):
+            print(tabla[i])
         """
         print("\nREGLAS: \n")
         print(reglas_utilizadas_en_orden)
