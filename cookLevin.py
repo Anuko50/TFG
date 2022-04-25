@@ -52,20 +52,20 @@ def apply(n, tabla, estados, alfabetoCinta, configuracionInicial, estadosFinales
     proposicionesPotenciales = generarProposicionesPotenciales(tabla, estados, alfabetoCinta)
     #print(proposicionesPotenciales)
     phi_start, phi_start_valores = phi_star_generator.generarPhiStart(n, tabla, proposicionesPotenciales, configuracionInicial)
-    print()
+    """ print()
     print("PHI_START:")
     print(phi_start)
     print()
     print("PHI_START_VALORES ASIGNADOS:")
-    print(phi_start_valores)
+    print(phi_start_valores) """
     
     phi_accept, phi_accept_valores, loCumpleAccept = phi_accept_generator.generarPhiAccept(tabla, phi_accept_generator.estadosFinalesEnBonito(estadosFinales), n)
-    print()
+    """ print()
     print("PHI_ACCEPT:")
     print(phi_accept)
     print()
     print("PHI_ACCEPT_VALORES ASIGNADOS:")
-    print(phi_accept_valores) 
+    print(phi_accept_valores)  """
     #  if(loCumpleAccept):
     #       print('SI tiene un estado final')
     #   else:

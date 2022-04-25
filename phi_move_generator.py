@@ -21,7 +21,7 @@ def generarLaMisma(fila, filaSiguiente, i):
                 igual_valores += "TRUE AND FALSE AND "
         else:
             #fila anterior
-            igual += "X_"+str(i)+"_"+str(index+1)+"_"+valor + " ) "
+            igual += "X_"+str(i)+"_"+str(index+1)+"_"+valor + " AND "
             #la fila siguiente
             igual += "X_"+str(i+1)+"_"+str(index+1)+"_"+valor + " ) "
             if(fila[index] == filaSiguiente[index]):
@@ -32,6 +32,7 @@ def generarLaMisma(fila, filaSiguiente, i):
     return igual, igual_valores
 
 #crea la fila tras aplicarle la transicion
+# #todo: falla aqui  
 def crearFila(fila, estado_nuevo, nuevo_simbolo, direccion):
     tamano = len(fila)
     filaNueva= ['0'] * tamano
@@ -82,7 +83,7 @@ def queHay(fila):
     return estadoFila, headFila
 
 #valores de transitions:
-#    ['estado_actual', 'estado_nuevo', 'simbolo_Actual', 'Nuevo_Simbolo', 'direccion']  
+#    ['estado_actual', 'estado_nuevo', 'simbolo_Actual', 'Nuevo_Simbolo', 'direccion']
 def generarFilas(fila, transitions):
     filas = []
     estadoFila, headFila = queHay(fila)
@@ -91,10 +92,6 @@ def generarFilas(fila, transitions):
         t=transitions[i]
         estado_actual = "q" +  str(t[0]) 
         simbolo_actual = str(t[2])
-        # print(estado_actual)
-        # print(estadoFila)
-        # print(simbolo_actual)
-        # print(headFila)
         if (estado_actual == estadoFila) and (headFila == simbolo_actual):
             estado_nuevo = "q" + str(t[1])
             nuevo_simbolo = str(t[3])
@@ -126,17 +123,20 @@ def generarPosibles(fila, filaSiguiente, transitions, i, j):
             posible_actual_valores=""
             #comparo la fila siguiente con la posible segun la formula
             tamano = len(f)
+
             for c in range(0, tamano,1):
-                valor = fila[c]
+                valor = f[c]
+                valorSiguiente = filaSiguiente[c]
+
                 if(c < tamano -1):
                     posible_actual += "X_"+str(j)+"_"+str(c+1)+"_"+valor+ " AND " 
-                    if(valor == filaSiguiente[c]):
+                    if(valor == valorSiguiente):
                         posible_actual_valores += "TRUE AND "
                     else:
                         posible_actual_valores += "FALSE AND "
                 else:
                     posible_actual += "X_"+str(j)+"_"+str(c+1)+"_"+valor + " "
-                    if(valor == filaSiguiente[x]):
+                    if(valor == valorSiguiente):
                         posible_actual_valores += "TRUE "
                     else:
                         posible_actual_valores += "FALSE  "
@@ -176,9 +176,6 @@ def generarPhiMove(tabla, n, transitions):
     phi_move=" ( "
     phi_move_valores=" ( "
     for i in range(0,n-1,1):
-        print(tabla[i])
-        print(tabla[i+1])
-        print()
         #comparamos la fila "i" con su siguiente
         igual, igual_valores = generarLaMisma(tabla[i], tabla[i+1], i+1)  #en caso de que no se haga transicion
         posibles, posibles_valores = generarPosibles(tabla[i], tabla[i+1], transitions, i+1, i+2)
