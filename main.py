@@ -4,6 +4,7 @@ import execute_controller
 import cookLevin
 import turing2utf
 import time
+import informationToTxt
 
 
 #FUNCION PARA LEER LA MT EN TXT
@@ -33,6 +34,10 @@ def read_tapes():
     tape = sys.argv[2]
     return tape
 
+# poner color en el texto para imprimir por pantalla
+def colored(r, g, b, text):
+    return "\033[38;2;{};{};{}m{} \033[38;2;255;255;255m".format(r, g, b, text)
+
 # main MT.jff tape o 
 # main MT.txt tape
 def main(): 
@@ -46,7 +51,16 @@ def main():
     print(str(sys.argv[1]))
     c=str(sys.argv[1])
     esMT = re.compile("(.*)(\.jff)")
+    validez = re.compile("(.*)(\.jff|\.txt)")
+    esValido = re.fullmatch(validez, c)
     match = re.fullmatch(esMT, c)
+    nombreMT = ""
+
+    if(esValido):
+        nombreMT = esValido.group(1)
+    else:
+        print("El archivo introducido no tiene una extension válida debe ser un .txt o un .jff")
+        sys.exit(1)
 
     # en la variable "name" va a estar la máquina de Turing en texto
     if(match):
@@ -77,25 +91,51 @@ def main():
     config, transitions = read_file(name)
     tape = read_tapes()
     # 3º volcar cada configuración intermedia desde la inicial hasta la final en el tablón.
-    # ejecutar la maquina
-    n, tabla, reglas_en_orden = execute_controller.controller(config, tape, transitions)
 
-    if(tabla is not None):
-        inicio = time.time()
-        # 4º aplicar algoritmo de Cook-Levin
-        configuracionInicial = execute_controller.crearConfiguracionInicial(sys.argv[2], config[5][0], n, config[3][0])
-        estados = config[4]
-        alfabetoCinta = config[2]
-        estadosFinales = config[6]
-        #print(configuracionInicial)
-        print("\n APLICACION DE COOK-LEVIN:")
-        #Aplicamos Cook-Levin
-        cookLevin.apply(n, tabla, estados, alfabetoCinta, configuracionInicial, estadosFinales, reglas_en_orden, transitions)
-        
-        # 5º contabilizar si el tiempo de estas máquinas es polinomial
-        fin = time.time()
-        print("\nTIEMPO DE EJECUCIÓN TOTAL: ")
-        print(fin - inicio)
+
+    #CARACTERISTICAS DE LA MT: 
+    # nombre, determinista o no, stay o no, estadoInicial, Blanco, estadosTot, estadosFinales y la entrada
+    noDeterminista = execute_controller.isNonDeterministic(transitions, config)
+    esStay = execute_controller.esStay(transitions)
+    estadoInicial = 'q' + str(config[5][0]) 
+    blanco = config[3][0]
+    estadosTotales = execute_controller.estadosEnBonito(config[4])
+    estadosFinales = execute_controller.estadosEnBonito(config[6])
+    entrada = sys.argv[2]
+
+    #Lo escribo en un fichero de salida:
+    informationToTxt.caracteristicasToTxt(nombreMT, noDeterminista, esStay, estadoInicial, blanco, estadosTotales, estadosFinales, entrada)
+    # ejecutar la maquina
+    n, tabla, reglas_en_orden = execute_controller.controller(config, tape, transitions, noDeterminista)
+
+    if (tabla is not None):
+        informationToTxt.tablonToTxt(nombreMT, execute_controller.transicionesEnBonito(reglas_en_orden) , entrada, tabla, n)
+    else: 
+        print(colored(255,0,0, 'No se ha podido crear la tabla debido a que se ha excedido el número máximo de pasos de cálculo.'))
+        print(colored(255,0,0, 'Se procede a cerrar el programa.'))
+        sys.exit(1)
+
+
+    inicio = time.time()
+    # 4º aplicar algoritmo de Cook-Levin
+    configuracionInicial = execute_controller.crearConfiguracionInicial(sys.argv[2], config[5][0], n, config[3][0])
+    alfabetoCinta = config[2]
+    #print(configuracionInicial)
+    #print("\n APLICACION DE COOK-LEVIN:")
+    #Aplicamos Cook-Levin
+    phi, phi_start, phi_accept, phi_cell, phi_move = cookLevin.apply(n, tabla, estadosTotales, alfabetoCinta, configuracionInicial, estadosFinales, reglas_en_orden, transitions)
+    
+    informationToTxt.phi_startToTxt(nombreMT, phi_start, entrada)
+    informationToTxt.phi_acceptToTxt(nombreMT, phi_accept, entrada)
+    informationToTxt.phi_cellToTxt(nombreMT, phi_cell, entrada)
+    informationToTxt.phi_moveToTxt(nombreMT, phi_move, entrada)
+    informationToTxt.phiToTxt(nombreMT, phi_start, phi_accept, phi_cell, phi_move, entrada)
+
+    #TODO: TABLON, PHIS (+ SU VALOR), CARACTERISTICAS DE LA MT A .TXT
+    # 5º contabilizar si el tiempo de estas máquinas es polinomial
+    fin = time.time()
+    print("\nTIEMPO DE EJECUCIÓN TOTAL: ")
+    print(fin - inicio)
     
         
 

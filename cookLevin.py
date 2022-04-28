@@ -10,11 +10,6 @@ import phi_move_generator
 ###############################   FUNCIONES GENERICAS     ##########################################
 ####################################################################################################
 
-def estadosEnBonito(estados):
-    estadosBonitos = []
-    for estado in estados:
-        estadosBonitos.append('q'+ str(estado))
-    return estadosBonitos 
 
 def generarProposicionesPotenciales(tabla, estados, alfabetoCinta):
     #se genera a partir de cada casilla del tablón
@@ -46,20 +41,20 @@ def generarProposicionesPotenciales(tabla, estados, alfabetoCinta):
 
 def apply(n, tabla, estados, alfabetoCinta, configuracionInicial, estadosFinales, reglas_en_orden, transitions):
     
-    print(configuracionInicial)
+    #print(configuracionInicial)
     #Pongo los estados en el formato adecuado:
-    estados = estadosEnBonito(estados) 
+    estados = estados 
     proposicionesPotenciales = generarProposicionesPotenciales(tabla, estados, alfabetoCinta)
     #print(proposicionesPotenciales)
     phi_start, phi_start_valores = phi_star_generator.generarPhiStart(n, tabla, proposicionesPotenciales, configuracionInicial)
-    """ print()
+    """  print()
     print("PHI_START:")
     print(phi_start)
     print()
     print("PHI_START_VALORES ASIGNADOS:")
-    print(phi_start_valores) """
+    print(phi_start_valores)  """
     
-    phi_accept, phi_accept_valores, loCumpleAccept = phi_accept_generator.generarPhiAccept(tabla, phi_accept_generator.estadosFinalesEnBonito(estadosFinales), n)
+    phi_accept, phi_accept_valores, loCumpleAccept = phi_accept_generator.generarPhiAccept(tabla, estadosFinales, n)
     """ print()
     print("PHI_ACCEPT:")
     print(phi_accept)
@@ -79,20 +74,20 @@ def apply(n, tabla, estados, alfabetoCinta, configuracionInicial, estadosFinales
     print(phi_cell)
     print()
     print("PHI_CELL_VALORES ASIGNADOS:")
-    print(phi_cell_valores)  """
+    print(phi_cell_valores)   """
     
     phi_move, phi_move_valores = phi_move_generator.generarPhiMove(tabla, n, transitions)
-    print()
+    """ print()
     print("PHI_MOVE:")
     print(phi_move)
     print()
     print("PHI_MOVE_VALORES ASIGNADOS:")
-    print(phi_move_valores) 
+    print(phi_move_valores)  """
     #de las proposiciones de arriba se genera un AND que contiene sólo algunas 
     #de las variables generadas por la fila 1
     #phi_start = generarPhiStart(tabla, proposicionesPotenciales, configuracionInicial)   
 
     phi = phi_start + " AND " + phi_accept + " AND " + phi_cell + " AND " + phi_move
 
-    return phi 
+    return phi, phi_start, phi_accept, phi_cell, phi_move
 

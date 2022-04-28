@@ -186,7 +186,7 @@ def generarPhiMove(tabla, n, transitions):
         
         #¿hay transiciones posibles?
         if(posibles == ""): # si no, solo pongo el caso de que sean iguales, lo unico que la hace legal
-            if(i < n-1): # porque recorremos las filas dos a dos
+            if(i < n-2): # porque recorremos las filas dos a dos
                 phi_move += " ) AND "
                 phi_move_valores +=  " ) AND "
             else:

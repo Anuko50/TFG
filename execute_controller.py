@@ -103,15 +103,52 @@ def isNonDeterministic(transitions, config):
                     return True
     return False
 
+def esStay(transitions):
+    # valores de cada transicion: ['estado_actual', 'estado_nuevo', 'simbolo_Actual', 'Nuevo_Simbolo', 'direccion']
+    for i in range(1, len(transitions) + 1, 1):
+        direccion = transitions[i][4]
+        if(direccion == 'S'): 
+            return True
+    return False
+
+
+def estadosEnBonito(estados):
+    estadosBonitos = []
+    for estado in estados:
+        estadosBonitos.append('q'+ str(estado))
+    return estadosBonitos 
+
+def transicionABointo(transicion):
+    t = []
+    estado_actual = 'Estado actual = q' + str(transicion[0])
+    estado_nuevo = 'Nuevo estado = q' + str(transicion[1])
+    simbolo_actual = 'Simbolo actual = ' + str(transicion[2])
+    nuevo_simbolo = 'Nuevo simbolo = ' + str(transicion[3])
+    direccion =  'Direccion = ' + str(transicion[4])
+    t.append(estado_actual)
+    t.append(simbolo_actual)
+    t.append(estado_nuevo)
+    t.append(nuevo_simbolo)
+    t.append(direccion)
+    return t
+
+def transicionesEnBonito(transiciones):
+    transicionesBonitas=[]
+    for i in range(1, len(transiciones) , 1):
+        t = transicionABointo(transiciones[i])
+        transicionesBonitas.append(t)
+
+    return transicionesBonitas
+
 """ Esta funcion sirve como controlador para ejecutar la MT segun sea no determinista o sí. 
 Una vez se ejecute se llamara a la creación de la tabla. """
-def controller(config, tape, transitions):
+def controller(config, tape, transitions, noDeterminista):
 
     filas_tabla = [] #lista donde vamos a guardar las filas de la tabla
     reglas_utilizadas_en_orden = [] #Lista donde se van a guardar las reglas de transicion aplicadas en orden de fila
     codigo = 0
     
-    if(isNonDeterministic(transitions, config)):
+    if(noDeterminista):
         print("se procede a ejecutar la MTND (no determinista)")
         codigo = execute_MTND.execute(config, tape, transitions, filas_tabla, reglas_utilizadas_en_orden)
     else:
@@ -124,9 +161,9 @@ def controller(config, tape, transitions):
     else:
         blanco = config[3][0]   # simbolo blanco que se va a utilizar
         tabla , n = crearTabla(filas_tabla, blanco)
-        print("\nTABLA: \n")
+        """ print("\nTABLA: \n")
         for i in range(0,n,1):
-            print(tabla[i])
+            print(tabla[i]) """
         """
         print("\nREGLAS: \n")
         print(reglas_utilizadas_en_orden)

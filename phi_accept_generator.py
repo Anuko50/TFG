@@ -3,12 +3,6 @@
 ####################################     PHI_ACCEPT   ##############################################
 ####################################################################################################
 
-def estadosFinalesEnBonito(estadosFinales):
-    estadosFinalesBonitos = []
-    for estado in estadosFinales:
-        estadosFinalesBonitos.append('q'+ str(estado))
-    return estadosFinalesBonitos
-
 def loContiene(estadosFinales, celda):
     for q in estadosFinales:
         if(q == celda):
