@@ -54,13 +54,16 @@ def clear():
         _ = system('clear')
 
 def mostrarComandosPosibles():
-    print(colored(102, 255, 102, 'h (help): muestra este mensaje'))
-    print(colored(102, 255, 102,'q (quit): termina el programa. '))
+    print(colored(102, 255, 102, 'h (o help): muestra este mensaje'))
+    print(colored(102, 255, 102,'q (o quit): termina el programa. '))
     print(colored(102, 255, 102,'1 : introduciendo un número de fila i y de columna j se mostrará una ventana y se dirá si es legal o no y el por qué.'))
     print(colored(102, 255, 102,'2 : explicación de phi_start.'))
     print(colored(102, 255, 102,'3 : explicación de phi_accept.'))
     print(colored(102, 255, 102,'4: explicación de phi_cell, introduciendo un numero i (fila) y otro j (columna) de celda.'))
     print(colored(102, 255, 102,'5: explicación de phi_move, introduciendo un numero i (fila).'))
+    print()
+    input('Presiona ENTER para continuar.')
+    clear()
 
 
 
@@ -168,26 +171,29 @@ def main():
     print(fin - inicio)
     
     quit = False
-    print("Bienvenido/a, introduce lo que quieres hacer.")
+    print("Bienvenido/a/e, introduce lo que quieres hacer.")
     print("Para ver las posibles opciones, introduce 'h' (de help): ")
     while(not quit):
+        print(colored(0,0,255,'¡Bienvenido al menú principal!'))
         comando = input()
         clear()
-        if(comando == 'h'):
+        if(comando == 'h' or comando == 'help'):
             mostrarComandosPosibles()
-        elif(comando == 'q'):
+        elif(comando == 'q' or comando == 'quit'):
             print(colored(0,0,255,'¡Adiós!'))
             exit(1)
         elif(comando == '1'):
-            print('EXPLICACIÓN VENTANAS')
+            print(colored(255, 255, 0, 'EXPLICACIÓN VENTANAS'))
         elif(comando == '2'):
-            print('EXPLICACIÓN PHI_START')
+            print(colored(255, 255, 0, 'EXPLICACIÓN PHI_START'))
+            cookLevin.explicacionPhi_start(phi_start, entrada)
         elif(comando == '3'):
-            print('EXPLICACIÓN PHI_ACCEPT')
+            print(colored(255, 255, 0, 'EXPLICACIÓN PHI_ACCEPT'))
+            cookLevin.explicacionPhi_accept(phi_accept, estadosFinales, entrada)
         elif(comando == '4'):
-            print('EXPLICACIÓN PHI_CELL')
+            print(colored(255, 255, 0, 'EXPLICACIÓN PHI_CELL'))
         elif(comando == '5'):
-            print('EXPLICACIÓN PHI_MOVE')
+            print(colored(255, 255, 0, 'EXPLICACIÓN PHI_MOVE'))
         else:
             print(colored(255,0,0,'Has introducido un comando invalido, si necesitas ayuda introduce h (help)'))
 
