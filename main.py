@@ -5,7 +5,13 @@ import cookLevin
 import turing2utf
 import time
 import informationToTxt
+# import only system from os
+from os import system, name
 
+
+####################################################################################################
+####################################     FUNCIONES :  ##############################################
+####################################################################################################
 
 #FUNCION PARA LEER LA MT EN TXT
 def read_file(file_name):
@@ -37,6 +43,30 @@ def read_tapes():
 # poner color en el texto para imprimir por pantalla
 def colored(r, g, b, text):
     return "\033[38;2;{};{};{}m{} \033[38;2;255;255;255m".format(r, g, b, text)
+
+# borrar la pantalla
+def clear():
+    # for windows
+    if name == 'nt':
+        _ = system('cls')
+    # for mac and linux(here, os.name is 'posix')
+    else:
+        _ = system('clear')
+
+def mostrarComandosPosibles():
+    print(colored(102, 255, 102, 'h (help): muestra este mensaje'))
+    print(colored(102, 255, 102,'q (quit): termina el programa. '))
+    print(colored(102, 255, 102,'1 : introduciendo un número de fila i y de columna j se mostrará una ventana y se dirá si es legal o no y el por qué.'))
+    print(colored(102, 255, 102,'2 : explicación de phi_start.'))
+    print(colored(102, 255, 102,'3 : explicación de phi_accept.'))
+    print(colored(102, 255, 102,'4: explicación de phi_cell, introduciendo un numero i (fila) y otro j (columna) de celda.'))
+    print(colored(102, 255, 102,'5: explicación de phi_move, introduciendo un numero i (fila).'))
+
+
+
+####################################################################################################
+####################################     MAIN :    #################################################
+####################################################################################################
 
 # main MT.jff tape o 
 # main MT.txt tape
@@ -137,7 +167,29 @@ def main():
     print("\nTIEMPO DE EJECUCIÓN TOTAL: ")
     print(fin - inicio)
     
-        
+    quit = False
+    print("Bienvenido/a, introduce lo que quieres hacer.")
+    print("Para ver las posibles opciones, introduce 'h' (de help): ")
+    while(not quit):
+        comando = input()
+        clear()
+        if(comando == 'h'):
+            mostrarComandosPosibles()
+        elif(comando == 'q'):
+            print(colored(0,0,255,'¡Adiós!'))
+            exit(1)
+        elif(comando == '1'):
+            print('EXPLICACIÓN VENTANAS')
+        elif(comando == '2'):
+            print('EXPLICACIÓN PHI_START')
+        elif(comando == '3'):
+            print('EXPLICACIÓN PHI_ACCEPT')
+        elif(comando == '4'):
+            print('EXPLICACIÓN PHI_CELL')
+        elif(comando == '5'):
+            print('EXPLICACIÓN PHI_MOVE')
+        else:
+            print(colored(255,0,0,'Has introducido un comando invalido, si necesitas ayuda introduce h (help)'))
 
 
 
