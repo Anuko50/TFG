@@ -173,7 +173,9 @@ def mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales
     print(colored(0, 179, 0, "Para ver las posibles opciones, introduce 'h' (de help): "))
 
     while(not quit):
-        print(colored(0,0,255,'¡Bienvenido al menú principal!'))
+        print(colored(0,0,255,'¡Bienvenida/o/e al menú principal!'))
+        print(colored(0,0,255, "Introduce el comando correspondiente a lo que quieres hacer."))
+        print(colored(0,0,255, "Para ver las posibles opciones, introduce 'h' (de help)"))
         comando = input()
         clear()
         if(comando == 'h' or comando == 'help'):
