@@ -1,4 +1,7 @@
 from os import system, name
+from platform import java_ver
+import phi_cell_generator
+import phi_move_generator
 
 # poner color en el texto para imprimir por pantalla
 def colored(r, g, b, text):
@@ -19,8 +22,8 @@ def mostrarComandosPosibles():
     print(colored(102, 255, 102,'1 : introduciendo un número de fila i y de columna j se mostrará una ventana y se dirá si es legal o no y el por qué.'))
     print(colored(102, 255, 102,'2 : explicación de phi_start.'))
     print(colored(102, 255, 102,'3 : explicación de phi_accept.'))
-    print(colored(102, 255, 102,'4: explicación de phi_cell, introduciendo un numero i (fila) y otro j (columna) de celda.'))
-    print(colored(102, 255, 102,'5: explicación de phi_move, introduciendo un numero i (fila).'))
+    print(colored(102, 255, 102,'4 : explicación de phi_cell, introduciendo un numero i (fila) y otro j (columna) de celda.'))
+    print(colored(102, 255, 102,'5 : explicación de phi_move, introduciendo un numero i (fila).'))
     print()
     input('Presiona ENTER para continuar.')
     clear()
@@ -73,12 +76,61 @@ def explicacionPhi_accept(phi_accept, estadosFinales, entrada):
     input('pulsa ENTER para volver al menú principal')
     clear()
 
+def explicacionPhi_Cell(tabla, estados, alfabetoCinta, i, j):
+    print(colored(26, 26, 255,'La fórmula booleana phi_Cell quiere representar el que Para cada celda concreta de la fila i y la columna j del tablón, una y sólo una de sus'))
+    print(colored(26, 26, 255, 'correspondientes |C| variables puede estar a 1 (True) y las demás tienen que estar a 0 (False).'))
+    print()
+    print(colored(0, 179, 0, 'En otras palabras, lo que refleja es que Por cada celda debe haber uno, y solo uno, de los valores posibles.'))
+    print(colored(0, 179, 0, 'Recordemos que \'C \' es un conjunto que consiste en la unión de el alfabeto de la cinta, el conjunto de estados, el símbolo que representa al Blanco (\'B\' u otro) y el símbolo \'#\'.'))
+    print(colored(0, 179, 0, 'O de otra manera, C contiene a todos los símbolos que puede contener el tablón.'))
+    print()
+    print(colored(0, 179, 0,'La fórmula genérica es esta: '))
+    print()
+    print(colored(255, 255, 0, 'phi_Cell = AND[1≤i,j≤nk] [ (OR[s∈C] x_i_j_s) AND ( AND[s,t∈C;s̸=t] ( NOT(x_i_j_s) OR NOT(x_i_j_t) ) ) ]'))
+    print()
+    input('pulsa ENTER para continuar')
+    clear()
+    print(colored(0, 179, 0,'La fórmula genérica es esta: '))
+    print(colored(255, 255, 0, 'phi_Cell = AND[1≤i,j≤nk] [ (OR[s∈C] x_i_j_s) AND ( AND[s,t∈C;s̸=t] ( NOT(x_i_j_s) OR NOT(x_i_j_t) ) ) ]'))
+    print()
+    print(colored(0, 179, 0, 'La fórmula se va a explicar por partes. Lo primero que encontramos es: \'AND[1≤i,j≤nk]\', esto refela que debe cumplirse para todas las celdas de la tabla, es decir que se va a unir la fórmula con un \'AND\' para que se cumplimente esta condición.'))
+    print(colored(0, 179, 0, 'Ahora analizamos la fórmula en sí, lo que debe cumplirse por cada celda. La dividiremos en dos partes: '))
+    print()
+    print(colored(0, 179, 0, 'Primera parte: \' (OR[s∈C] x_i_j_s) \'.'))
+    print(colored(0, 179, 0, 'Esta parte representa el que al menos un símbolo \'s\'∈C esté contenido dentro de la celda. Si esto no ocurriera, en la celda hubiera un símbolo que no pertenece a C (o no hubiera símbolo), esta parte daría False.'))
+    print()
+    print(colored(0, 179, 0, 'Segunda parte: \'( AND[s,t∈C;s̸=t] ( NOT(x_i_j_s) OR NOT(x_i_j_t) ) )\'.'))
+    print(colored(0, 179, 0, 'Esta parte representa el que solo haya un símbolo contenido en esa celda, es decir, que una celda no contenga más de un valor.'))
+    print(colored(0, 179, 0, 'Para ello se \'comparan\' dos símbolos \'s\' y \'t\', ambos pertenecientes a C y diferentes, y se comprueba que dentro de la celda o no esté contenido s, o no esté contenido t, pero lo que no puede ocurrir es que ambos estén dentro.'))
+    print()
+    input('pulsa ENTER para continuar')
+    clear()
+    phi_cell_min, phi_cell_min_valores, primeraParte, segundaParte = phi_cell_generator.generarPhiCell_soloUna(tabla, estados, alfabetoCinta, int(i), int(j))
+    print(colored(0, 179, 0,'Ahora mostraremos, para la celda introducida, lo que correspondería a la primera y segunda parte que se acaban de explicar : '))
+    print()
+    print(colored(0, 179, 0, 'Primera parte: \' (OR[s∈C] x_i_j_s) \'.'))
+    print()
+    print(colored(255, 255, 0, primeraParte))
+    print()
+    print(colored(0, 179, 0, 'Segunda parte: \'( AND[s,t∈C;s̸=t] ( NOT(x_i_j_s) OR NOT(x_i_j_t) ) )\'.'))
+    print()
+    print(colored(255, 255, 0, segundaParte))
+    print()
+    input('pulsa ENTER para continuar')
+    clear()
+    print(colored(0, 179, 0,'Ahora mostraremos la fórmula phi_cell completa en esta celda en particular :'))
+    print()
+    print(colored(255, 255, 0, phi_cell_min))
+    print()
+    input('pulsa ENTER para volver al menú principal')
+    clear()
 
+    return None
 
-def mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales, entrada):
+def mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales, entrada, estados, alfabetoCinta):
     quit = False
-    print("Bienvenido/a/e, introduce lo que quieres hacer.")
-    print("Para ver las posibles opciones, introduce 'h' (de help): ")
+    print(colored(0, 179, 0, "Bienvenido/a/e, introduce lo que quieres hacer."))
+    print(colored(0, 179, 0, "Para ver las posibles opciones, introduce 'h' (de help): "))
 
     while(not quit):
         print(colored(0,0,255,'¡Bienvenido al menú principal!'))
@@ -99,6 +151,20 @@ def mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales
             explicacionPhi_accept(phi_accept, estadosFinales, entrada)
         elif(comando == '4'):
             print(colored(255, 255, 0, 'EXPLICACIÓN PHI_CELL'))
+            correct = False
+
+            while(not correct):
+                i = input('introduce el número de fila de la celda a analizar: ')
+                j = input('introduce el número de columna de la celda a analizar: ')
+                if((i == '0' or j== '0') or ( int(i) > n or int(j) > n)):
+                    print(colored(255,0,0, 'Has introducido un valor de celda incorrecto, debe ser de 1 hasta n (siendo n el tamaño del tablón).'))
+                    print(colored(255,0,0, 'El tamaño del tablón actual es de '+ str(n) + " X "+ str(n)))
+                    print(colored(255,0,0, 'Intentalo de nuevo.'))
+                else: 
+                    correct = True
+
+            clear()
+            explicacionPhi_Cell(tabla, estados, alfabetoCinta, i, j)
         elif(comando == '5'):
             print(colored(255, 255, 0, 'EXPLICACIÓN PHI_MOVE'))
         else:

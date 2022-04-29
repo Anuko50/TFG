@@ -80,3 +80,25 @@ def generarPhiCell(tabla, n, estados, alfabetoCinta):
 
     return  phi_cell, phi_cell_valores
 
+#funcion para la explicacion de phi_cell
+def generarPhiCell_soloUna(tabla, estados, alfabetoCinta, i, j):
+    #por como pido los datos al usuario:
+    i = i-1
+    j = j-1
+    phi_cell_min="[ "
+    phi_cell_min_valores = "[ "
+    valoresPosibles = estados + alfabetoCinta + ["#"]    #conjunto de valores posibles (en la nomenclatura de la asignatura se llama "C")
+    
+    primeraParte, primeraParteValor, estaBien = generarPrimeraParte(i+1,j+1,tabla[i][j],valoresPosibles)
+    #print("PRIMERA PARTE DE LA FORMULA, ESTABIEN = " + str(estaBien))
+    phi_cell_min += primeraParte + " AND "
+    phi_cell_min_valores += primeraParteValor + " AND "
+
+    segundaParte, segundaParteValor, estaBien = generarSegundaParte(i+1,j+1,tabla[i][j],valoresPosibles)
+    #print("SEGUNDA PARTE DE LA FORMULA, ESTABIEN = " + str(estaBien))
+
+    phi_cell_min += segundaParte  + " ]"
+    phi_cell_min_valores += segundaParteValor + " ]"
+
+
+    return  phi_cell_min, phi_cell_min_valores, primeraParte, segundaParte
