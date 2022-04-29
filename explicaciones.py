@@ -77,10 +77,10 @@ def explicacionPhi_accept(phi_accept, estadosFinales, entrada):
     clear()
 
 def explicacionPhi_Cell(tabla, estados, alfabetoCinta, i, j):
-    print(colored(26, 26, 255,'La fórmula booleana phi_Cell quiere representar el que Para cada celda concreta de la fila i y la columna j del tablón, una y sólo una de sus'))
+    print(colored(26, 26, 255,'La fórmula booleana phi_Cell quiere representar el que para cada celda concreta de la fila i y la columna j del tablón, una y sólo una de sus'))
     print(colored(26, 26, 255, 'correspondientes |C| variables puede estar a 1 (True) y las demás tienen que estar a 0 (False).'))
     print()
-    print(colored(0, 179, 0, 'En otras palabras, lo que refleja es que Por cada celda debe haber uno, y solo uno, de los valores posibles.'))
+    print(colored(0, 179, 0, 'En otras palabras, lo que refleja es que por cada celda debe haber uno, y solo uno, de los valores posibles.'))
     print(colored(0, 179, 0, 'Recordemos que \'C \' es un conjunto que consiste en la unión de el alfabeto de la cinta, el conjunto de estados, el símbolo que representa al Blanco (\'B\' u otro) y el símbolo \'#\'.'))
     print(colored(0, 179, 0, 'O de otra manera, C contiene a todos los símbolos que puede contener el tablón.'))
     print()
@@ -125,9 +125,49 @@ def explicacionPhi_Cell(tabla, estados, alfabetoCinta, i, j):
     input('pulsa ENTER para volver al menú principal')
     clear()
 
-    return None
 
-def mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales, entrada, estados, alfabetoCinta):
+def explicacionPhi_move(tabla, n, transitions, i):
+    print(colored(26, 26, 255,'La fórmula booleana phi_move quiere representar el que cada configuración de cada fila siga legalmente a la anterior según establece la función de transición de N, δ.'))
+    print()
+    print(colored(0, 179, 0, 'En otras palabras, lo que refleja es que cada fila sea legal teniendo en cuenta la anterior.'))
+    print(colored(0, 179, 0, 'En este caso hemos tenido en cuenta que una fila es legal cuando: 1) es exactamente igual que su anterior (debido a la posibilidad de transiciones Stay), y 2) cuando la fila siguiente corresponde a haber realizado una de las transiciones posibles (contenidas en δ).'))
+    print()
+    print(colored(0, 179, 0,'La fórmula genérica es esta: '))
+    print()
+    print(colored(255, 255, 0, 'phi_Move = AND[1≤i,j≤nk] ( OR[a1···a6 is a legal window] ( x_i_j−1_a1 AND x_i_j_a2 AND x_i_j+1_a3 AND x_i+1_j−1_a4 AND x_i+1_j_a5 AND x_i+1_j+1_a6 ))'))
+    print()
+    print(colored(0, 179, 0,'Lo primero que encontramos es: \'AND[1≤i,j≤nk]\', esto refela que debe cumplirse para todas las celdas de la tabla, es decir que se va a unir la fórmula con un \'AND\' para que se cumplimente esta condición.'))
+    print(colored(0, 179, 0,'Lo siguiente que nos encontramos representa que en la fórmula se van a unir todas las posibles ventanas legales mediante OR\'s, teniendo que cumplirse una de ellas.'))
+    print()
+    input('pulsa ENTER para continuar')
+    clear()
+    phi_move_min, phi_move_valores_min, igual, posibles = phi_move_generator.generarPhi_move_UnaSolo(tabla, n, transitions, int(i))
+    print(colored(0, 179, 0,'A pesar de que en la teoría se explica con ventanas, nosotros lo vamos a estudiar ahora de manera diferente. Por ello en el menú hay otra opción para ver cuando una ventana es legal o no.'))
+    print(colored(0, 179, 0,'Nuestra fórmula va a ser la siguiente: '))
+    print(colored(255, 255, 0, 'phi_Move = AND[1≤i,j≤nk] ( OR[fila \'i\' es una fila legal] ( (que sean iguales las filas i e i+1)|(que la fila i+1 se haya creado con una funcion de transicion a partir de la fila i) ) )'))
+    print()
+    print(colored(0, 179, 0,'Para la fila i seleccionada, el caso en el que sean iguales la fila i y su siguiente es: '))
+    print(colored(255, 255, 0, igual))
+    print()
+    print(colored(0, 179, 0,'Las otras posibles filas legales (creadas a través de una función de transición) serían:'))
+    if(posibles == ""):
+        print(colored(255, 255, 0,'En este caso concreto no existen otras filas posibles, debe ser igual que la anterior.'))
+    else:
+        print(colored(255, 255, 0, posibles))
+    print()
+    input('pulsa ENTER para continuar')
+    clear()
+    print(colored(0, 179, 0,'Nuestra fórmula va a ser la siguiente: '))
+    print(colored(255, 255, 0, 'phi_Move = AND[1≤i,j≤nk] ( OR[fila \'i\' es una fila legal] ( (que sean iguales las filas i e i+1)|(que la fila i+1 se haya creado con una funcion de transicion a partir de la fila i) ) )'))
+    print()
+    print(colored(0, 179, 0, 'Para esta fila, su parte en la fórmula phi_move en este caso concreto sería:'))
+    print()
+    print(colored(255, 255, 0,phi_move_min))
+    print()
+    input('pulsa ENTER para volver al menú principal')
+    clear()
+
+def mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales, entrada, estados, alfabetoCinta, transitions):
     quit = False
     print(colored(0, 179, 0, "Bienvenido/a/e, introduce lo que quieres hacer."))
     print(colored(0, 179, 0, "Para ver las posibles opciones, introduce 'h' (de help): "))
@@ -167,5 +207,17 @@ def mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales
             explicacionPhi_Cell(tabla, estados, alfabetoCinta, i, j)
         elif(comando == '5'):
             print(colored(255, 255, 0, 'EXPLICACIÓN PHI_MOVE'))
+            correct = False
+
+            while(not correct):
+                i = input('introduce el número de fila a analizar: ')
+                if((i == '0' ) or ( int(i) > n-1)):
+                    print(colored(255,0,0, 'Has introducido un valor de fila incorrecto, debe ser de 1 hasta n-1 (siendo n el tamaño del tablón).'))
+                    print(colored(255,0,0, 'El tamaño del tablón actual es de '+ str(n) + " X "+ str(n)))
+                    print(colored(255,0,0, 'Intentalo de nuevo.'))
+                else: 
+                    correct = True
+
+            explicacionPhi_move(tabla, n, transitions, i)
         else:
             print(colored(255,0,0,'Has introducido un comando invalido, si necesitas ayuda introduce h (help)'))

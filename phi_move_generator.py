@@ -203,3 +203,27 @@ def generarPhiMove(tabla, n, transitions):
     phi_move += " ) "
     phi_move_valores += " ) "
     return phi_move, phi_move_valores 
+
+def generarPhi_move_UnaSolo(tabla, n, transitions, i):
+    phi_move_min=" ( "
+    phi_move_valores_min=" ( "
+    
+    #comparamos la fila "i" con su siguiente
+    igual, igual_valores = generarLaMisma(tabla[i-1], tabla[i], i)  #en caso de que no se haga transicion
+    posibles, posibles_valores = generarPosibles(tabla[i-1], tabla[i], transitions, i, i+1)
+    # el primer caso siempre va a ser el de si las dos filas son iguales
+    phi_move_min += " ( " + igual
+    phi_move_valores_min += " ( " +  igual_valores  
+    
+    #¿hay transiciones posibles?
+    if(posibles == ""): # si no, solo pongo el caso de que sean iguales, lo unico que la hace legal
+            phi_move_min +=  " ) "
+            phi_move_valores_min +=  " ) "
+    else: # si hay transiciones posibles; pongo la fila actual + la posible
+            phi_move_min += " OR " + posibles + " "
+            phi_move_valores_min += " OR " + posibles_valores + " "
+
+    phi_move_min += " ) "
+    phi_move_valores_min += " ) "
+
+    return phi_move_min, phi_move_valores_min, igual, posibles 
