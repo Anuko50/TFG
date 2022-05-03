@@ -104,7 +104,7 @@ def main():
 
     """ valores de transitions:
     ['estado_actual', 'estado_nuevo', 'simbolo_Actual', 'Nuevo_Simbolo', 'direccion']  """
-
+    
     config = {}
     transitions = {}
     tape = []
@@ -128,6 +128,7 @@ def main():
     # ejecutar la maquina
     n, tabla, reglas_en_orden = execute_controller.controller(config, tape, transitions, noDeterminista)
 
+    print(tabla)
     if (tabla is not None):
         informationToTxt.tablonToTxt(nombreMT, execute_controller.transicionesEnBonito(reglas_en_orden) , entrada, tabla, n)
     else: 

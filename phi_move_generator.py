@@ -166,8 +166,140 @@ def valoresFila(fila, i):
 
     return igual, igual_valores
 
+####################################################################################################
+####################################     FUNCIONES VENTANAS :    ###################################
+####################################################################################################
 
-#TODO: fallo el final no cierra bien la formula
+def cogerVentana(tabla, i,j):
+    i = i-1
+    j = j-1
+    #las ventanas son 
+    # a1 a2 a3
+    # a4 a5 a6
+    # j debe ser mayor que 1 y menor que n
+    # i debe ser menor que n
+    a2 = tabla[i][j]
+    a1 = tabla[i][j-1]
+    a3 = tabla[i][j+1]
+    a5 = tabla[i+1][j]
+    a4 = tabla[i+1][j-1]
+    a6 = tabla[i+1][j+1]
+    ventana = [[a1,a2,a3],[a4,a5,a6]]
+    fila = tabla[i]
+
+    return fila, ventana
+
+def ventanaEsIgual(ventana):
+    es = True
+    fila_1= ventana[0]
+    fila_2= ventana[1]
+    
+    for i in range(0,len(fila_1),1):
+        if(fila_1[i] != fila_2[i]):
+            es = False
+    return es
+
+def ventanaTieneMasDeUno(ventana):
+    cont_1 = 0
+    cont_2 = 0
+    seCumple = False
+    esEstado = re.compile("q[0-9]*")
+    fila_1= ventana[0]
+    fila_2= ventana[1]
+    for i in range(0,len(fila_1),1):
+        match = re.fullmatch(esEstado, fila_1[i])
+        if(match):
+            cont_1 += 1
+        match = re.fullmatch(esEstado, fila_2[i])
+        if(match):
+            cont_2 += 1
+    
+    if(cont_1 > 1):
+        if(cont_2 > 1):
+            seCumple = True
+            code = -3
+            return seCumple,code
+        else:
+            seCumple = True
+            code = -1
+            return seCumple,code
+    elif(cont_2 > 1):
+        seCumple = True
+        code = -2
+        return seCumple,code
+    
+    seCumple = False
+    code = 0
+    return seCumple, code
+
+def ventanaNoSentido(ventana):
+    # tiene estado en el medio de la primera fila y en la segunda no (no esta ni a su derecha ni a su izq ni en la misma posicion)
+    seCumple = True
+    fila_1= ventana[0]
+    fila_2= ventana[1]
+    
+    esEstado = re.compile("q[0-9]*")
+    match = re.fullmatch(esEstado, fila_1[1])
+    if(match):
+        for a in fila_2:    
+            match = re.fullmatch(esEstado, a)
+            if(match):
+                seCumple = False
+    else:
+        seCumple = False
+        return seCumple
+    
+    return seCumple
+
+def ventanaTransicion(ventana, transiciones, fila, j): 
+    filasPosibles = generarFilas(fila, transiciones)
+    fila_2 = ventana[1]
+    code = -5 #2 o  si no tiene ninguna-5
+    numPosibles=1
+    for fila in filasPosibles:
+        #print('caso numero = '+ str(numPosibles))
+        es = True
+        cont=0
+        for i in range(j,j+3,1):
+            #print('en ventana = '+ str(fila_2[cont]) +' en la fila = ' + str(fila[i-2]))
+            if(fila_2[cont] != fila[i-2]):
+                es = False
+            cont += 1
+        if(es):
+            code = 2
+            return code
+        #print('valor de j = '+str(j))
+        numPosibles += 1
+    return code
+
+def esLegal(tabla, transiciones, i, j):
+    fila, ventana = cogerVentana(tabla, i, j)
+
+    code = 0
+    #  = 1 si es igual
+    if (ventanaEsIgual(ventana)):
+        code = 1
+        return code
+    #  = -1 tiene mas de un estado en la primera fila
+    #  = -2 si es en la segunda
+    #  = -3 si es en las dos
+    seCumple, code = ventanaTieneMasDeUno(ventana)
+    if(seCumple):
+        return code
+    #  = -4 tiene estado en el medio de la primera fila y en la segunda no (no esta ni a su derecha ni a su izq ni en la misma posicion)
+    elif(ventanaNoSentido(ventana)):
+        code = -4
+    #  = 2 si por transicion es congruente
+    #  = -5 es incongruente por transicion
+    else:
+        code = ventanaTransicion(ventana, transiciones, fila, j)
+    return code
+
+
+####################################################################################################
+########################################     MAIN :       ##########################################
+####################################################################################################
+
 def generarPhiMove(tabla, n, transitions):
     #IDEA: ir fila por fila viendo que es legal.
     #Una fila es legal cuando: tiene un unico estado y cuando es igual que la anterior o se ha llegado a ella a través de una regla de transicion

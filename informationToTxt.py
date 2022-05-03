@@ -83,5 +83,4 @@ def phiToTxt(nombreDeMT, phi_start, phi_accept, phi_cell, phi_move , palabra):
         f.write("[ "+phi_cell +' ]\n\n')
         f.write(' AND \n\n')
         f.write("[ "+phi_move +' ]\n\n')
-        f.write(' AND \n\n')
-    f.close()
+        f.close()

@@ -167,6 +167,43 @@ def explicacionPhi_move(tabla, n, transitions, i):
     input('pulsa ENTER para volver al menú principal')
     clear()
 
+def explicacionVentanas(tabla, transiciones, i, j):
+    print(colored(26, 26, 255,'Vamos a analizar la ventana seleccionada.'))
+    _, ventana = phi_move_generator.cogerVentana(tabla, i,j)
+    fila_1 = ventana[0]
+    fila_2 = ventana[1]
+    print()
+    print(colored(255, 255, 0, fila_1))
+    print(colored(255, 255, 0, fila_2))
+    print()
+    print(colored(0, 179, 0, 'Ahora procedemos a estudiar si es legal o no y por qué.'))
+    print()
+    input('pulsa ENTER para continuar')
+    clear()
+    print(colored(255, 255, 0, fila_1))
+    print(colored(255, 255, 0, fila_2))
+    print()
+
+    code = phi_move_generator.esLegal(tabla, transiciones, i, j)
+
+    if(code == 1):  #  = 1 si es igual
+        print(colored(0, 179, 0, "La ventana es legal porque la primera fila es igual a la segunda."))
+    elif(code == 2): #  = 2 si por transicion es congruente
+        print(colored(0, 179, 0, "La ventana es legal porque se ha llegado a la segunda desde una regla de transición."))
+    elif(code == -1): #  = -1 tiene mas de un estado en la primera fila
+        print(colored(0, 179, 0, "La ventana es ilegal porque hay más de un estado en la primera fila."))
+    elif(code == -2): #  = -2 si es en la segunda
+        print(colored(0, 179, 0, "La ventana es ilegal porque hay más de un estado en la segunda fila."))
+    elif(code == -3):  #  = -3 si es en las dos
+        print(colored(0, 179, 0, "La ventana es ilegal porque hay más de un estado en ambas filas."))
+    elif(code == -4): #  = -4 tiene estado en el medio de la primera fila y en la segunda no (no esta ni a su derecha ni a su izq ni en la misma posicion)
+        print(colored(0, 179, 0, "La ventana es ilegal porque hay un estado en la celda principal de la primera fila y no hay estado en la segunda."))
+    elif(code == -5):     #  = -5 es incongruente por transicion
+        print(colored(0, 179, 0, "La ventana es ilegal porque, aunque aparentemente pueda parecer legal, no se ha podido llegar a ella desde ninguna transición."))
+    input('pulsa ENTER para volver al menú principal')
+    clear()
+
+
 def mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales, entrada, estados, alfabetoCinta, transitions):
     quit = False
     print(colored(0, 179, 0, "Bienvenido/a/e, introduce lo que quieres hacer."))
@@ -185,6 +222,24 @@ def mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales
             exit(1)
         elif(comando == '1'):
             print(colored(255, 255, 0, 'EXPLICACIÓN VENTANAS'))
+            # j debe ser mayor que 1 y menor que n
+            # i debe ser menor que n
+            print(colored(0, 179, 0, 'Se van a analizar ventanas, recuerda que una ventana era así: '))
+            print(colored(0, 179, 0, 'a1 a2 a3'))
+            print(colored(0, 179, 0, 'a4 a5 a6'))
+            print(colored(0, 179, 0, 'Una ventana se localiza por la celda a2 (central).'))
+            i = input('introduce el número de fila de la ventana: ')
+            j = input('introduce el número de columna de la ventana: ')
+            correct = False
+            while(not correct):
+                if( int(j) <= 1 or ( int(i) >= n or int(j) >= n)):
+                    print(colored(255,0,0, 'Has introducido un valor de celda incorrecto, la columna debe ser mayor que 1 y tanto la fila como la columna deben ser menor que n (siendo n el tamaño del tablón).'))
+                    print(colored(255,0,0, 'El tamaño del tablón actual es de '+ str(n) + " X "+ str(n)))
+                    print(colored(255,0,0, 'Intentalo de nuevo.'))
+                else:
+                    correct = True
+            clear()
+            explicacionVentanas(tabla, transitions, int(i), int(j))
         elif(comando == '2'):
             print(colored(255, 255, 0, 'EXPLICACIÓN PHI_START'))
             explicacionPhi_start(phi_start, entrada)

@@ -3,6 +3,9 @@ from distutils.command.config import config
 import execute_MT
 import execute_MTND
 
+####################################################################################################
+#################################    FUNCIONES TABLON :    #########################################
+####################################################################################################
 
 """La tabla tendrá tamño:
     nº filas = nº de transiciones realizadas +1 (o lo longitud de filas tabla)
@@ -139,6 +142,12 @@ def transicionesEnBonito(transiciones):
         transicionesBonitas.append(t)
 
     return transicionesBonitas
+
+    
+
+####################################################################################################
+####################################     CONTROLLER :    ###########################################
+####################################################################################################
 
 """ Esta funcion sirve como controlador para ejecutar la MT segun sea no determinista o sí. 
 Una vez se ejecute se llamara a la creación de la tabla. """
