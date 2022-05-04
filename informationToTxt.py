@@ -97,7 +97,7 @@ def phiToTxt(nombreDeMT, phi_start, phi_accept, phi_cell, phi_move , palabra, ph
         f.write(' AND \n\n')
         f.write("[ "+phi_cell +' ]\n\n')
         f.write(' AND \n\n')
-        f.write("[ "+phi_move +' ]\n\n')
+        f.write("[ "+phi_move +' ]\n\n\n\n')
         f.write("FÓRMULA COMPLETA (seguida)=  \n\n")
         f.write(phi +'\n\n' )
         f.close()
