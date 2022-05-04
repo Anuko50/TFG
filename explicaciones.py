@@ -167,7 +167,7 @@ def explicacionPhi_move(tabla, n, transitions, i):
     input('pulsa ENTER para volver al menú principal')
     clear()
 
-def explicacionVentanas(tabla, transiciones, i, j):
+def explicacionVentanas(tabla, transiciones, i, j, blanco):
     print(colored(26, 26, 255,'Vamos a analizar la ventana seleccionada.'))
     _, ventana = phi_move_generator.cogerVentana(tabla, i,j)
     fila_1 = ventana[0]
@@ -184,7 +184,7 @@ def explicacionVentanas(tabla, transiciones, i, j):
     print(colored(255, 255, 0, fila_2))
     print()
 
-    code = phi_move_generator.esLegal(tabla, transiciones, i, j)
+    code = phi_move_generator.esLegal(tabla, transiciones, i, j, blanco)
 
     if(code == 1):  #  = 1 si es igual
         print(colored(0, 179, 0, "La ventana es legal porque la primera fila es igual a la segunda."))
@@ -200,11 +200,12 @@ def explicacionVentanas(tabla, transiciones, i, j):
         print(colored(0, 179, 0, "La ventana es ilegal porque hay un estado en la celda principal de la primera fila y no hay estado en la segunda."))
     elif(code == -5):     #  = -5 es incongruente por transicion
         print(colored(0, 179, 0, "La ventana es ilegal porque, aunque aparentemente pueda parecer legal, no se ha podido llegar a ella desde ninguna transición."))
+    print()
     input('pulsa ENTER para volver al menú principal')
     clear()
 
 
-def mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales, entrada, estados, alfabetoCinta, transitions):
+def mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales, entrada, estados, alfabetoCinta, transitions, blanco):
     quit = False
     print(colored(0, 179, 0, "Bienvenido/a/e, introduce lo que quieres hacer."))
     print(colored(0, 179, 0, "Para ver las posibles opciones, introduce 'h' (de help): "))
@@ -239,7 +240,7 @@ def mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales
                 else:
                     correct = True
             clear()
-            explicacionVentanas(tabla, transitions, int(i), int(j))
+            explicacionVentanas(tabla, transitions, int(i), int(j), blanco)
         elif(comando == '2'):
             print(colored(255, 255, 0, 'EXPLICACIÓN PHI_START'))
             explicacionPhi_start(phi_start, entrada)

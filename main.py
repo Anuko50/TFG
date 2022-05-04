@@ -157,6 +157,6 @@ def main():
     print("\nTIEMPO DE EJECUCIÓN TOTAL: ")
     print(fin - inicio)
     
-    explicaciones.mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales, entrada, estadosTotales, alfabetoCinta, transitions)
+    explicaciones.mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales, entrada, estadosTotales, alfabetoCinta, transitions, blanco)
    
 main()

@@ -358,8 +358,8 @@ def ventanaNoSentido(ventana):
     
     return seCumple
 
-def ventanaTransicion(ventana, transiciones, fila, j): 
-    filasPosibles = generarFilas(fila, transiciones)
+def ventanaTransicion(ventana, transiciones, fila, j, blanco): 
+    filasPosibles = generarFilas(fila, transiciones, blanco)
     fila_2 = ventana[1]
     code = -5 #2 o  si no tiene ninguna-5
     numPosibles=1
@@ -379,7 +379,7 @@ def ventanaTransicion(ventana, transiciones, fila, j):
         numPosibles += 1
     return code
 
-def esLegal(tabla, transiciones, i, j):
+def esLegal(tabla, transiciones, i, j, blanco):
     fila, ventana = cogerVentana(tabla, i, j)
 
     code = 0
@@ -399,7 +399,7 @@ def esLegal(tabla, transiciones, i, j):
     #  = 2 si por transicion es congruente
     #  = -5 es incongruente por transicion
     else:
-        code = ventanaTransicion(ventana, transiciones, fila, j)
+        code = ventanaTransicion(ventana, transiciones, fila, j, blanco)
     return code
 
 
