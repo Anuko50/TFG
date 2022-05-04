@@ -45,37 +45,52 @@ def tablonToTxt(nombreDeMT, reglasEnOrden, palabra, tabla, n):
     
     f.close()
 
-def phi_startToTxt(nombreDeMT, phi_start, palabra):
+def phi_startToTxt(nombreDeMT, phi_start, palabra, phi_start_valores, valorTotal_phi_start):
     outputFile = nombreDeMT + "_phi_start_palabra_\'"+palabra+"\'.txt"
     with open(outputFile, 'w') as f:
+        f.write('VALOR TOTAL DE LA FÓRMULA = ' + str(valorTotal_phi_start)+'\n')
         f.write('Fórmula phi_start creada con la palabra \''+palabra+'\': \n\n')
         f.write(phi_start +'\n\n')
+        f.write('Fórmula phi_start (con los valores asignados) creada con la palabra \''+palabra+'\': \n\n')
+        f.write(phi_start_valores +'\n\n')
     f.close()
 
-def phi_acceptToTxt(nombreDeMT, phi_accept, palabra):
+def phi_acceptToTxt(nombreDeMT, phi_accept, palabra, phi_accept_valores, valorTotal_phi_accept):
     outputFile = nombreDeMT + "_phi_accept_palabra_\'"+palabra+"\'.txt"
     with open(outputFile, 'w') as f:
+        f.write('VALOR TOTAL DE LA FÓRMULA = ' + str(valorTotal_phi_accept)+'\n')
         f.write('Fórmula phi_accept creada con la palabra \''+palabra+'\': \n\n')
         f.write(phi_accept +'\n\n')
+        f.write('Fórmula phi_accept (con los valores asignados) creada con la palabra \''+palabra+'\': \n\n')
+        f.write(phi_accept_valores +'\n\n')
     f.close()
 
-def phi_cellToTxt(nombreDeMT, phi_cell, palabra):
+def phi_cellToTxt(nombreDeMT, phi_cell, palabra, phi_cell_valores, valorTotal_phi_cell):
     outputFile = nombreDeMT + "_phi_cell_palabra_\'"+palabra+"\'.txt"
     with open(outputFile, 'w') as f:
+        f.write('VALOR TOTAL DE LA FÓRMULA = ' + str(valorTotal_phi_cell)+'\n')
         f.write('Fórmula phi_cell creada con la palabra \''+palabra+'\': \n\n')
         f.write(phi_cell +'\n\n')
+        f.write('Fórmula phi_cell (con los valores asignados) creada con la palabra \''+palabra+'\': \n\n')
+        f.write(phi_cell_valores +'\n\n')
     f.close()
 
-def phi_moveToTxt(nombreDeMT, phi_move, palabra):
+def phi_moveToTxt(nombreDeMT, phi_move, palabra, phi_move_valores, valorTotal_phi_move):
     outputFile = nombreDeMT + "_phi_move_palabra_\'"+palabra+"\'.txt"
     with open(outputFile, 'w') as f:
+        f.write('VALOR TOTAL DE LA FÓRMULA = ' + str(valorTotal_phi_move)+'\n')
         f.write('Fórmula phi_move creada con la palabra \''+palabra+'\': \n\n')
         f.write(phi_move +'\n\n')
+        f.write('Fórmula phi_cell (con los valores asignados) creada con la palabra \''+palabra+'\': \n\n')
+        f.write(phi_move_valores +'\n\n')
     f.close()
 
-def phiToTxt(nombreDeMT, phi_start, phi_accept, phi_cell, phi_move , palabra):
+def phiToTxt(nombreDeMT, phi_start, phi_accept, phi_cell, phi_move , palabra, phi, valorTotal_phi):
     outputFile = nombreDeMT + "_phi_palabra_\'"+palabra+"\'.txt"
     with open(outputFile, 'w') as f:
+        f.write('VALOR TOTAL DE LA FÓRMULA = ' + str(valorTotal_phi)+'\n')
+        f.write('Fórmula phi creada con la palabra \''+palabra+'\': \n')
+        f.write('Se expone a trozos para mayor claridad, primero phi_start, luego accept, cell y move al final. \n\n')
         f.write("[ "+phi_start +' ]\n\n')
         f.write(' AND \n\n')
         f.write("[ "+phi_accept +' ]\n\n')
@@ -83,4 +98,6 @@ def phiToTxt(nombreDeMT, phi_start, phi_accept, phi_cell, phi_move , palabra):
         f.write("[ "+phi_cell +' ]\n\n')
         f.write(' AND \n\n')
         f.write("[ "+phi_move +' ]\n\n')
+        f.write("FÓRMULA COMPLETA (seguida)=  \n\n")
+        f.write(phi +'\n\n' )
         f.close()

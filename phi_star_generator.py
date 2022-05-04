@@ -5,6 +5,7 @@
 def generarPhiStart(n, tabla, proposicionesPotenciales, configuracionInicial):
     phiStart=""
     phiStart_valores=""
+    valorTotal = True
 
     for j in range(0,n,1):
         if(j < n-1):
@@ -18,10 +19,12 @@ def generarPhiStart(n, tabla, proposicionesPotenciales, configuracionInicial):
                 phiStart_valores += "TRUE AND "
             else:
                 phiStart_valores += "FALSE AND "
+                valorTotal = False
         else:
             if(configuracionInicial[j] == tabla[0][j]):
                 phiStart_valores += "TRUE "
             else:
                 phiStart_valores += "FALSE "
+                valorTotal = False
 
-    return phiStart, phiStart_valores
+    return phiStart, phiStart_valores, valorTotal

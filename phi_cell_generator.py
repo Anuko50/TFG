@@ -61,14 +61,17 @@ def generarPhiCell(tabla, n, estados, alfabetoCinta):
     phi_cell=""
     phi_cell_valores = ""
     valoresPosibles = estados + alfabetoCinta + ["#"]    #conjunto de valores posibles (en la nomenclatura de la asignatura se llama "C")
-    
+    valorTotal = True
+
     for i in range(0,n,1):
         for j in range(0,n,1):
             primeraParte, primeraParteValor, estaBien = generarPrimeraParte(i+1,j+1,tabla[i][j],valoresPosibles)
+            valorTotal = estaBien
             #print("PRIMERA PARTE DE LA FORMULA, ESTABIEN = " + str(estaBien))
             phi_cell += primeraParte + " AND "
             phi_cell_valores += primeraParteValor + " AND "
             segundaParte, segundaParteValor, estaBien = generarSegundaParte(i+1,j+1,tabla[i][j],valoresPosibles)
+            valorTotal = estaBien
             #print("SEGUNDA PARTE DE LA FORMULA, ESTABIEN = " + str(estaBien))
             if( j == n-1 and i == n-1): #Estoy en el ultimo caso
                 phi_cell += segundaParte 
@@ -78,7 +81,7 @@ def generarPhiCell(tabla, n, estados, alfabetoCinta):
                 phi_cell += segundaParte + " AND "
                 phi_cell_valores += segundaParteValor + " AND "
 
-    return  phi_cell, phi_cell_valores
+    return  phi_cell, phi_cell_valores, valorTotal
 
 #funcion para la explicacion de phi_cell
 def generarPhiCell_soloUna(tabla, estados, alfabetoCinta, i, j):

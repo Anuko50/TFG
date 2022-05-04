@@ -144,13 +144,13 @@ def main():
     #print(configuracionInicial)
     #print("\n APLICACION DE COOK-LEVIN:")
     #Aplicamos Cook-Levin
-    phi, phi_start, phi_accept, phi_cell, phi_move = cookLevin.apply(n, tabla, estadosTotales, alfabetoCinta, configuracionInicial, estadosFinales, reglas_en_orden, transitions)
+    phi, phi_start, phi_accept, phi_cell, phi_move, phi_start_valores, phi_accept_valores, phi_cell_valores, phi_move_valores , valorTotal_phi, valorTotal_phi_start, valorTotal_phi_accept, valorTotal_phi_cell, valorTotal_phi_move = cookLevin.apply(n, tabla, estadosTotales, alfabetoCinta, configuracionInicial, estadosFinales, reglas_en_orden, transitions)
     
-    informationToTxt.phi_startToTxt(nombreMT, phi_start, entrada)
-    informationToTxt.phi_acceptToTxt(nombreMT, phi_accept, entrada)
-    informationToTxt.phi_cellToTxt(nombreMT, phi_cell, entrada)
-    informationToTxt.phi_moveToTxt(nombreMT, phi_move, entrada)
-    informationToTxt.phiToTxt(nombreMT, phi_start, phi_accept, phi_cell, phi_move, entrada)
+    informationToTxt.phi_startToTxt(nombreMT, phi_start, entrada, phi_start_valores, valorTotal_phi_start)
+    informationToTxt.phi_acceptToTxt(nombreMT, phi_accept, entrada, phi_accept_valores, valorTotal_phi_accept)
+    informationToTxt.phi_cellToTxt(nombreMT, phi_cell, entrada, phi_cell_valores, valorTotal_phi_cell)
+    informationToTxt.phi_moveToTxt(nombreMT, phi_move, entrada, phi_move_valores, valorTotal_phi_move)
+    informationToTxt.phiToTxt(nombreMT, phi_start, phi_accept, phi_cell, phi_move, entrada, phi, valorTotal_phi)
 
     #TODO: TABLON, PHIS (+ SU VALOR), CARACTERISTICAS DE LA MT A .TXT
     # 5º contabilizar si el tiempo de estas máquinas es polinomial

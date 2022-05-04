@@ -23,7 +23,7 @@ def generarPhiAccept(tabla, estadosFinales, n):
     #en alguna celda. (QUE HAYA ESTADO FINAL EN ALGUNA CELDA, LA QUE SEA)
     literalesFinales = crearLiteralesFinales(estadosFinales, n) 
     tam = len(literalesFinales)
-    loCumple=False
+    loCumple = False
     fi_Accept=""
     fi_Accept_valores=""
 
