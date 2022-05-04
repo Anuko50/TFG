@@ -81,7 +81,7 @@ def phi_moveToTxt(nombreDeMT, phi_move, palabra, phi_move_valores, valorTotal_ph
         f.write('VALOR TOTAL DE LA FÓRMULA = ' + str(valorTotal_phi_move)+'\n')
         f.write('Fórmula phi_move creada con la palabra \''+palabra+'\': \n\n')
         f.write(phi_move +'\n\n')
-        f.write('Fórmula phi_cell (con los valores asignados) creada con la palabra \''+palabra+'\': \n\n')
+        f.write('Fórmula phi_move (con los valores asignados) creada con la palabra \''+palabra+'\': \n\n')
         f.write(phi_move_valores +'\n\n')
     f.close()
 
@@ -100,4 +100,10 @@ def phiToTxt(nombreDeMT, phi_start, phi_accept, phi_cell, phi_move , palabra, ph
         f.write("[ "+phi_move +' ]\n\n\n\n')
         f.write("FÓRMULA COMPLETA (seguida)=  \n\n")
         f.write(phi +'\n\n' )
-        f.close()
+    f.close()
+
+def depuracion(txt):
+    outputFile = "Depuracion.txt"
+    with open(outputFile, 'w') as f:
+        f.write(txt)
+    f.close()

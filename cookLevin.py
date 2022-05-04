@@ -4,6 +4,7 @@ import phi_accept_generator
 import phi_cell_generator
 import phi_move_generator
 
+import informationToTxt
 
 ####################################################################################################
 ##################################      FUNCIONES :     ############################################
@@ -39,7 +40,7 @@ def generarProposicionesPotenciales(tabla, estados, alfabetoCinta):
 ####################################     APLICACION:  ##############################################
 ####################################################################################################
 
-def apply(n, tabla, estados, alfabetoCinta, configuracionInicial, estadosFinales, reglas_en_orden, transitions):
+def apply(n, tabla, estados, alfabetoCinta, configuracionInicial, estadosFinales, reglas_en_orden, transitions, blanco):
     
     #print(configuracionInicial)
     #Pongo los estados en el formato adecuado:
@@ -76,7 +77,8 @@ def apply(n, tabla, estados, alfabetoCinta, configuracionInicial, estadosFinales
     print("PHI_CELL_VALORES ASIGNADOS:")
     print(phi_cell_valores)   """
     
-    phi_move, phi_move_valores, valorTotal_phi_move = phi_move_generator.generarPhiMove(tabla, n, transitions)
+    phi_move, phi_move_valores, valorTotal_phi_move, txt = phi_move_generator.generarPhiMove(tabla, n, transitions, blanco)
+    informationToTxt.depuracion(txt)
     """ print()
     print("PHI_MOVE:")
     print(phi_move)

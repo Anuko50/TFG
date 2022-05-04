@@ -37,7 +37,7 @@ def generarLaMisma(fila, filaSiguiente, i):
 
 #crea la fila tras aplicarle la transicion
 # #todo: falla aqui  
-def crearFila(fila, estado_nuevo, nuevo_simbolo, direccion):
+def crearFila(fila, estado_nuevo, nuevo_simbolo, direccion, blanco):
     tamano = len(fila)
     filaNueva= ['0'] * tamano
     esEstado = re.compile("q[0-9]*")
@@ -52,13 +52,22 @@ def crearFila(fila, estado_nuevo, nuevo_simbolo, direccion):
                     filaNueva[i] = fila[i] 
                 return filaNueva
             elif(direccion ==  'L'):
-                muevo = filaNueva[i-1]
-                filaNueva[i-1] = estado_nuevo  
-                filaNueva[i] = muevo 
-                filaNueva[i+1] = nuevo_simbolo 
-                i = i + 2
-                for i in range(i,len(fila),1): 
-                    filaNueva[i] = fila[i] 
+                if(i-1 == 0):
+                    filaNueva[i] = estado_nuevo
+                    filaNueva[i+1] = blanco
+                    filaNueva[i+2] = nuevo_simbolo
+                    filaNueva[i+3] = fila[i+2]
+                    i = i+4
+                    for i in range(i,len(fila),1): 
+                        filaNueva[i] = fila[i] 
+                else:
+                    muevo = filaNueva[i-1]
+                    filaNueva[i-1] = estado_nuevo  
+                    filaNueva[i] = muevo 
+                    filaNueva[i+1] = nuevo_simbolo 
+                    i = i + 2
+                    for i in range(i,len(fila),1): 
+                        filaNueva[i] = fila[i] 
                 return filaNueva
             else: # stay, me quedo igual
                 filaNueva[i] = estado_nuevo 
@@ -88,7 +97,7 @@ def queHay(fila):
 
 #valores de transitions:
 #    ['estado_actual', 'estado_nuevo', 'simbolo_Actual', 'Nuevo_Simbolo', 'direccion']
-def generarFilas(fila, transitions):
+def generarFilas(fila, transitions, blanco):
     filas = []
     estadoFila, headFila = queHay(fila)
     tam = len(transitions)
@@ -100,13 +109,13 @@ def generarFilas(fila, transitions):
             estado_nuevo = "q" + str(t[1])
             nuevo_simbolo = str(t[3])
             direccion = str(t[4])
-            f = crearFila(fila, estado_nuevo, nuevo_simbolo, direccion)
+            f = crearFila(fila, estado_nuevo, nuevo_simbolo, direccion, blanco)
             filas.append(f)
 
     return filas
 
 
-def generarPosibles(fila, filaSiguiente, transitions, i, j):
+def generarPosibles(fila, filaSiguiente, transitions, i, j, blanco):
     valoresFila=""
     valoresFila_valores = ""
     posibles = ""
@@ -119,7 +128,7 @@ def generarPosibles(fila, filaSiguiente, transitions, i, j):
         valoresFila += "X_"+str(i)+"_"+str(c+1)+"_"+valor+ " AND " 
         valoresFila_valores += "TRUE AND "   #siempre tienen valor verdad
 
-    filasPosibles = generarFilas(fila, transitions)
+    filasPosibles = generarFilas(fila, transitions, blanco)
     tam = len(filasPosibles)
 
     if(tam != 0):
@@ -130,7 +139,9 @@ def generarPosibles(fila, filaSiguiente, transitions, i, j):
             posible_actual_valores=""
             #comparo la fila siguiente con la posible segun la formula
             tamano = len(f)
-
+            """ print(f)
+            print(filaSiguiente)
+            print() """
             for c in range(0, tamano,1):
                 valor = f[c]
                 valorSiguiente = filaSiguiente[c]
@@ -183,7 +194,7 @@ def valoresFila(fila, i):
 ########################################     MAIN :       ##########################################
 ####################################################################################################
 
-def generarPhiMove(tabla, n, transitions):
+def generarPhiMove(tabla, n, transitions, blanco):
     #IDEA: ir fila por fila viendo que es legal.
     #Una fila es legal cuando: tiene un unico estado y cuando es igual que la anterior o se ha llegado a ella a través de una regla de transicion
     #Se hace así porque la MT admite el estado "STAY" y complica las cosas. De esta manera es muy facil.
@@ -191,10 +202,20 @@ def generarPhiMove(tabla, n, transitions):
     phi_move=" ( "
     phi_move_valores=" ( "
     valorTotal = True
+    txt = ""
     for i in range(0,n-1,1):
         #comparamos la fila "i" con su siguiente
         igual, igual_valores, esLaMisma = generarLaMisma(tabla[i], tabla[i+1], i+1)  #en caso de que no se haga transicion
-        posibles, posibles_valores, hayPosible = generarPosibles(tabla[i], tabla[i+1], transitions, i+1, i+2)
+
+        txt += 'Es la misma: ' + str(esLaMisma)
+        txt += igual_valores
+        txt += '\n'
+
+        posibles, posibles_valores, hayPosible = generarPosibles(tabla[i], tabla[i+1], transitions, i+1, i+2, blanco)
+
+        txt += 'Esta en posibles: ' + str(hayPosible)
+        txt += posibles_valores
+        txt += '\n'
 
         if((not esLaMisma) and (not hayPosible)):
             valorTotal = False
@@ -220,7 +241,7 @@ def generarPhiMove(tabla, n, transitions):
 
     phi_move += " ) "
     phi_move_valores += " ) "
-    return phi_move, phi_move_valores, valorTotal
+    return phi_move, phi_move_valores, valorTotal, txt
 
 
 ###################################################
