@@ -144,7 +144,7 @@ def main():
     #print(configuracionInicial)
     #print("\n APLICACION DE COOK-LEVIN:")
     #Aplicamos Cook-Levin
-    phi, phi_start, phi_accept, phi_cell, phi_move, phi_start_valores, phi_accept_valores, phi_cell_valores, phi_move_valores , valorTotal_phi, valorTotal_phi_start, valorTotal_phi_accept, valorTotal_phi_cell, valorTotal_phi_move = cookLevin.apply(n, tabla, estadosTotales, alfabetoCinta, configuracionInicial, estadosFinales, reglas_en_orden, transitions, blanco)
+    phi, phi_start, phi_accept, phi_cell, phi_move, phi_start_valores, phi_accept_valores, phi_cell_valores, phi_move_valores , valorTotal_phi, valorTotal_phi_start, valorTotal_phi_accept, valorTotal_phi_cell, valorTotal_phi_move, phi_start_latex, phi_accept_latex, phi_cell_latex,  phi_move_latex = cookLevin.apply(n, tabla, estadosTotales, alfabetoCinta, configuracionInicial, estadosFinales, reglas_en_orden, transitions, blanco)
     
     #informationToTxt.phi_startToTxt(nombreMT, phi_start, entrada, phi_start_valores, valorTotal_phi_start)
     #informationToTxt.phi_acceptToTxt(nombreMT, phi_accept, entrada, phi_accept_valores, valorTotal_phi_accept)
@@ -181,8 +181,12 @@ def main():
     print('\n\n\n') """
     
     #latex_generator.tablonAlterado(nombreMT, tablon_alterado, n, transitions, blanco, simbolosPosibles)
+    latex_generator.generarLatexInfo(nombreMT, noDeterminista, esStay, estadoInicial, blanco, estadosTotales, estadosFinales, entrada, 
+    transitions, reglas_en_orden, tabla, n, phi_start_valores, valorTotal_phi_start, phi_accept_valores, valorTotal_phi_accept,
+    phi_cell_valores, valorTotal_phi_cell, phi_move_valores, valorTotal_phi_move, valorTotal_phi,
+    phi_start_latex, phi_accept_latex, phi_cell_latex,  phi_move_latex  )
     
-    
-    explicaciones.mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales, entrada, estadosTotales, alfabetoCinta, transitions, blanco, simbolosPosibles)
+    explicaciones.mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales, entrada, estadosTotales, alfabetoCinta, 
+    transitions, blanco, simbolosPosibles , nombreMT, tablon_alterado, transitions)
    
 main()

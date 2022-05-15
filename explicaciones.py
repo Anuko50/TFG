@@ -132,7 +132,7 @@ def explicacionPhi_Cell(tabla, estados, alfabetoCinta, i, j):
     clear()
 
 
-def explicacionPhi_move(tabla, n, transitions, i):
+def explicacionPhi_move(tabla, n, transitions, i, blanco):
     print(colored(26, 26, 255,'La fórmula booleana phi_move quiere representar el que cada configuración de cada fila siga legalmente a la anterior según establece la función de transición de N, δ.'))
     print()
     print(colored(0, 179, 0, 'En otras palabras, lo que refleja es que cada fila sea legal teniendo en cuenta la anterior.'))
@@ -147,7 +147,7 @@ def explicacionPhi_move(tabla, n, transitions, i):
     print()
     input('pulsa ENTER para continuar')
     clear()
-    phi_move_min, phi_move_valores_min, igual, posibles = phi_move_generator.generarPhi_move_UnaSolo(tabla, n, transitions, int(i))
+    phi_move_min, phi_move_valores_min, igual, posibles = phi_move_generator.generarPhi_move_UnaSolo(tabla, n, transitions, int(i), blanco)
     print(colored(0, 179, 0,'A pesar de que en la teoría se explica con ventanas, nosotros lo vamos a estudiar ahora de manera diferente. Por ello en el menú hay otra opción para ver cuando una ventana es legal o no.'))
     print(colored(0, 179, 0,'Nuestra fórmula va a ser la siguiente: '))
     print(colored(255, 255, 0, 'phi_Move = AND[1≤i,j≤nk] ( OR[fila \'i\' es una fila legal] ( (que sean iguales las filas i e i+1)|(que la fila i+1 se haya creado con una funcion de transicion a partir de la fila i) ) )'))
@@ -203,7 +203,7 @@ def explicacionVentanas(tabla, transiciones, i, j, blanco, simbolosPosibles):
     clear()
 
 
-def mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales, entrada, estados, alfabetoCinta, transitions, blanco, simbolosPosibles):
+def mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales, entrada, estados, alfabetoCinta, transitions, blanco, simbolosPosibles, nombreDeMT, tablon_alterado, transiciones):
     quit = False
     print(colored(0, 179, 0, "Bienvenido/a/e, introduce lo que quieres hacer."))
     print(colored(0, 179, 0, "Para ver las posibles opciones, introduce 'h' (de help): "))
@@ -274,10 +274,13 @@ def mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales
                 else: 
                     correct = True
 
-            explicacionPhi_move(tabla, n, transitions, i)
+            explicacionPhi_move(tabla, n, transitions, i, blanco)
         elif(comando == 'ta' or comando == 'alterado'):
             print(colored(255, 255, 0, 'CREACION DEL LATEX CON TABLÓN ALTERADO.\n'))
             print(colored(0, 179, 0, 'El Latex tendrá el nombre de la MT introducida más \'_tablonAlterado\'.'))
-            latex_generator.tablonAlterado()
+            latex_generator.tablonAlterado(nombreDeMT, tablon_alterado, n, transiciones, blanco, simbolosPosibles)
+            print()
+            input('pulsa ENTER para volver al menú principal')
+            clear()
         else:
             print(colored(255,0,0,'Has introducido un comando invalido, si necesitas ayuda introduce h (help)'))

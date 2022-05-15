@@ -184,8 +184,37 @@ def esLegal(tabla, transiciones, i, j, blanco, simbolosPosibles):
 
     return mensaje, legal
 
+
+
+def ponerFormulaEnLatex(formula):
+    formulaBonita = '$'
+    #$X_1_1_\_\#$ AND $X_1_2_\_q_0$ AND $X_1_3_0 AND X_1_4_1 AND X_1_5_#$
+    index = 0
+    for l in range(0,len(formula),1):
+        letra = formula[index]
+        if(letra =='X'):
+            for i in range(index,index+6,1):
+                formulaBonita += formula[i]
+            formulaBonita += '\_'
+            index = index+5
+        elif(letra == '#'):
+            formulaBonita += '\\#'
+        elif(letra == 'q'):
+            formulaBonita += 'q_'
+        elif(letra == ' '):
+            formulaBonita+= '$'+'\\ '
+        else:
+            formulaBonita+= letra
+        
+        index += 1
+        if(index > len(formula)-1):
+            break
+    
+    formulaBonita += '$'
+    return formulaBonita
+
 def main():
-    tabla_alterada = [['#', '0', 'q4', '1', '#'],
+    """ tabla_alterada = [['#', '0', 'q4', '1', '#'],
     ['#', 'B', 'q2', '1', '#'],
     ['#', '#', 'q4', '1', '#'],
     ['#', 'q0', 'q1', '1', '#'],
@@ -210,9 +239,13 @@ def main():
                 print(f)
             print()
             print(mensaje)
-            print()
+            print() """
             
-   
-    
+    """ formula = 'X_1_1_# AND X_1_2_q0 AND $X_1_3_0 AND X_1_4_1 AND X_1_5_#'
+    nueva = ponerFormulaEnLatex(formula)
+    print(nueva)
+    print() """
+    q = 'q0'
+    print(q[1])
 
 main()

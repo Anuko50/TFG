@@ -47,7 +47,7 @@ def apply(n, tabla, estados, alfabetoCinta, configuracionInicial, estadosFinales
     estados = estados 
     proposicionesPotenciales = generarProposicionesPotenciales(tabla, estados, alfabetoCinta)
     #print(proposicionesPotenciales)
-    phi_start, phi_start_valores, valorTotal_phi_start = phi_star_generator.generarPhiStart(n, tabla, proposicionesPotenciales, configuracionInicial)
+    phi_start, phi_start_valores, valorTotal_phi_start, phi_start_latex = phi_star_generator.generarPhiStart(n, tabla, proposicionesPotenciales, configuracionInicial)
     """  print()
     print("PHI_START:")
     print(phi_start)
@@ -55,7 +55,7 @@ def apply(n, tabla, estados, alfabetoCinta, configuracionInicial, estadosFinales
     print("PHI_START_VALORES ASIGNADOS:")
     print(phi_start_valores)  """
     
-    phi_accept, phi_accept_valores, valorTotal_phi_accept = phi_accept_generator.generarPhiAccept(tabla, estadosFinales, n)
+    phi_accept, phi_accept_valores, valorTotal_phi_accept, phi_accept_latex = phi_accept_generator.generarPhiAccept(tabla, estadosFinales, n)
     """ print()
     print("PHI_ACCEPT:")
     print(phi_accept)
@@ -69,7 +69,7 @@ def apply(n, tabla, estados, alfabetoCinta, configuracionInicial, estadosFinales
     #   
     #   print(estadosFinales)
 
-    phi_cell, phi_cell_valores, valorTotal_phi_cell = phi_cell_generator.generarPhiCell(tabla, n, estados, alfabetoCinta)
+    phi_cell, phi_cell_valores, valorTotal_phi_cell, phi_cell_latex = phi_cell_generator.generarPhiCell(tabla, n, estados, alfabetoCinta)
     """ print()
     print("PHI_CELL:")
     print(phi_cell)
@@ -77,7 +77,7 @@ def apply(n, tabla, estados, alfabetoCinta, configuracionInicial, estadosFinales
     print("PHI_CELL_VALORES ASIGNADOS:")
     print(phi_cell_valores)   """
     
-    phi_move, phi_move_valores, valorTotal_phi_move, txt = phi_move_generator.generarPhiMove(tabla, n, transitions, blanco)
+    phi_move, phi_move_valores, valorTotal_phi_move,  phi_move_latex= phi_move_generator.generarPhiMove(tabla, n, transitions, blanco)
     #informationToTxt.depuracion(txt)
     """ print()
     print("PHI_MOVE:")
@@ -91,5 +91,5 @@ def apply(n, tabla, estados, alfabetoCinta, configuracionInicial, estadosFinales
 
     phi = phi_start + " AND " + phi_accept + " AND " + phi_cell + " AND " + phi_move
     valorTotal_phi = valorTotal_phi_start and valorTotal_phi_accept and valorTotal_phi_cell and valorTotal_phi_move
-    return phi, phi_start, phi_accept, phi_cell, phi_move, phi_start_valores, phi_accept_valores, phi_cell_valores, phi_move_valores , valorTotal_phi, valorTotal_phi_start, valorTotal_phi_accept, valorTotal_phi_cell, valorTotal_phi_move
+    return phi, phi_start, phi_accept, phi_cell, phi_move, phi_start_valores, phi_accept_valores, phi_cell_valores, phi_move_valores , valorTotal_phi, valorTotal_phi_start, valorTotal_phi_accept, valorTotal_phi_cell, valorTotal_phi_move, phi_start_latex, phi_accept_latex, phi_cell_latex,  phi_move_latex
 

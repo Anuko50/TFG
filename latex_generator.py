@@ -2,6 +2,38 @@ import re
 import codecs
 import phi_move_generator
 
+
+#vaya movida de función esta que voy a hacer. VAYA MOVIDA.
+def ponerFormulaEnLatex(formula):
+    formulaBonita = '$'
+    #formulaBonita = ''
+    index = 0
+    for l in range(0,len(formula),1):
+        letra = formula[index]
+        if(letra =='X'):
+            for i in range(index,index+6,1):
+                formulaBonita += formula[i]
+            formulaBonita += '\_'
+            index = index+5
+        elif(letra == '#'):
+            formulaBonita += '\\#'
+        elif(letra == 'q'):
+            formulaBonita += 'q_'
+        elif(letra == ' '):
+            #formulaBonita+= '$'+'\\ '
+            formulaBonita+= '\\ '
+        else:
+            formulaBonita+= letra
+        
+        index += 1
+        if(index > len(formula)-1):
+            break
+    
+    formulaBonita += '$'
+    return formulaBonita
+
+
+
 #solo si la lista es de strings
 def listToStr(list):
     str =  " ".join(list)
@@ -11,10 +43,26 @@ def listToStr2(list):
     str = "  ".join(list)
     return str
 
+def transicionABonito(t):
+    transicion_bonita = ''
+    estado_actual = '$q_' + str(t[0]) +'$'
+    simbolo_actual = str(t[2])
+    estado_nuevo = '$q_' + str(t[1]) +'$'
+    nuevo_simbolo = str(t[3])
+    d = str(t[4])
+    if(d == 'L'):
+        direccion = 'Izquierda'
+    elif(d == 'R'):
+        direccion = 'Derecha'
+    else:
+        direccion = 'Stay'
 
+    transicion_bonita = '$\\delta$('+estado_actual+','+simbolo_actual+') = ('+estado_nuevo+','+nuevo_simbolo+','+direccion+')'
+    return transicion_bonita
 ##################################################################
-################### LATEX DEL TABLON #############################
+################ LATEX DEL TABLON ALTERADO #######################
 ##################################################################
+
 def  crear_eles_tabuladas(n):
     eles = '|'
     for i in range(0,n,1):
@@ -22,8 +70,8 @@ def  crear_eles_tabuladas(n):
     return eles
 
 def tablonAlterado(nombreDeMT, tablon_alterado, n, transiciones, blanco, simbolosPosibles):
-    #outputFile = nombreDeMT+ "_tablon_alterado.tex"
-    outputFile = "tablon_alterado.tex"
+    outputFile = nombreDeMT+ "_tablon_alterado.tex"
+    #outputFile = "tablon_alterado.tex"
     
     with codecs.open(outputFile, 'w', "utf-8-sig") as f:
         #Cosas que importar de manera genérica
@@ -41,19 +89,18 @@ def tablonAlterado(nombreDeMT, tablon_alterado, n, transiciones, blanco, simbolo
         f.write('\\begin{document}\n')
         f.write('\\maketitle\n\n')
 
-
         #####################################################
         ######  tablon alterado, mostrar la tabla ###########
         #####################################################
         f.write('\\section{Tabla alterada}\n\n')
         f.write('Aquí mostraremos la tabla alterada de manera aleatoria. Lo que se puede encontrar es que:\n')
-        f.write('\\begin{itemize}\n')
+        f.write('\\begin{enumerate}\n')
         f.write('\\item Se haya introducido un carácter que no pertenece al conjunto C.\n')
         f.write('\\item Se haya cambiado un carácter a otro perteneciente al conjunto C.\n')
         f.write('\\item Se haya cambiado la primera fila por otra aleatoria del tablón.\n')
         f.write('\\item Se haya añadido un estado de más.\n')
         f.write('\\item Eliminar estados para quitar el sentido del tablón, cambiándolos por otro signo.\n')
-        f.write('\\end{itemize}')
+        f.write('\\end{enumerate}')
         
         f.write('\\begin{table}[h]\n')
         f.write('\\centering\n')
@@ -72,14 +119,30 @@ def tablonAlterado(nombreDeMT, tablon_alterado, n, transiciones, blanco, simbolo
                 match_hastag = re.fullmatch(esHastag, celda)
                 if(j < n-1):
                     if(match):
-                        fila_tabla += celda +'  &   '
+                        cont=0
+                        fila_tabla += '$'
+                        for l in celda:
+                            if(cont==0):
+                                fila_tabla += l+'_'
+                            else:
+                                fila_tabla += l
+                            cont +=1
+                        fila_tabla += '$  &   '
                     elif(match_hastag):
                         fila_tabla += '\\#' +'  &   '
                     else:
                         fila_tabla += celda +'   &   '
                 else:
                     if(match):
-                        fila_tabla += celda + '\t'
+                        cont=0
+                        fila_tabla += '$'
+                        for l in celda:
+                            if(cont==0):
+                                fila_tabla += l+'_'
+                            else:
+                                fila_tabla += l
+                            cont +=1 
+                        fila_tabla += '$\t'
                     elif(match_hastag):
                         fila_tabla += '\\#' + '\t'
                     else:
@@ -92,9 +155,8 @@ def tablonAlterado(nombreDeMT, tablon_alterado, n, transiciones, blanco, simbolo
         f.write('\\end{table}\n')
         
 
-        #####################################################
+       
         ##########  MOSTRAR LAS VENTANAS ILEGALES ###########
-        #####################################################
 
         f.write('\\section{Ventanas ilegales}\n')
         f.write('En este apartado se mostrarán las ventanas ilegales que nacen del tablón alterado.\\newline')
@@ -130,28 +192,60 @@ def tablonAlterado(nombreDeMT, tablon_alterado, n, transiciones, blanco, simbolo
                 match_hastag_2 = re.fullmatch(esHastag, celda_2)
                 if(i < len(fila_1)-1):
                     if(match_1):
-                        fila_tabla_1 += celda_1 +'  &   '
+                        cont=0
+                        fila_tabla_1 += '$'
+                        for l in celda_1:
+                            if(cont==0):
+                                fila_tabla_1 += l+'_'
+                            else:
+                                fila_tabla_1 += l
+                            cont +=1
+                        fila_tabla_1 += '$  &   '
                     elif(match_hastag_1):
                         fila_tabla_1 += '\\#' +'  &   '
                     else:
                         fila_tabla_1 += celda_1 +'   &   '
                         
                     if(match_2):
-                        fila_tabla_2 += celda_2 +'  &   '
+                        cont=0
+                        fila_tabla_2 += '$'
+                        for l in celda_2:
+                            if(cont==0):
+                                fila_tabla_2 += l+'_'
+                            else:
+                                fila_tabla_2 += l
+                            cont +=1
+                        fila_tabla_2 += '$  &   '
                     elif(match_hastag_2):
                         fila_tabla_2 += '\\#' +'  &   '
                     else:
                         fila_tabla_2 += celda_2 +'   &   '
                 else:
                     if(match_1):
-                        fila_tabla_1 += celda_1 + '\t'
+                        cont=0
+                        fila_tabla_1 += '$'
+                        for l in celda_1:
+                            if(cont==0):
+                                fila_tabla_1 += l+'_'
+                            else:
+                                fila_tabla_1 += l
+                            cont +=1
+                        fila_tabla_1 += '$\t'
                     elif(match_hastag_1):
                         fila_tabla_1 += '\\#' + '\t'
                     else:
                         fila_tabla_1 += celda_1 + '\t'
                     
                     if(match_2):
-                        fila_tabla_2 += celda_2 + '\t'
+                        cont=0
+                        fila_tabla_2 += '$'
+                        for l in celda_2:
+                            if(cont==0):
+                                fila_tabla_2 += l+'_'
+                            else:
+                                fila_tabla_2 += l
+                            cont +=1
+                        fila_tabla_2 += '$\t'
                     elif(match_hastag_2):
                         fila_tabla_2 += '\\#' + '\t'
                     else:
@@ -175,95 +269,201 @@ def tablonAlterado(nombreDeMT, tablon_alterado, n, transiciones, blanco, simbolo
 
     f.close()
 
-def caracteristicasToTxt(nombreDeMT, noDeterministic, stay, estadoInicial, blanco, estadosTot, estadosFinales, entrada):
-    outputFile = nombreDeMT + "_Caracteristicas.txt"
-    with open(outputFile, 'w') as f:
-        f.write( 'CARACTERISTICAS DE LA MÁQUINA DE TURING '+ nombreDeMT + '\n')
+
+
+##################################################################
+################### LATEX CON TODA LA INFO #######################
+##################################################################
+
+def generarLatexInfo(nombreDeMT, noDeterministic, stay, estadoInicial, blanco, estadosTot, estadosFinales, entrada, transitions, reglasEnOrden, 
+                    tabla, n, phi_start_valores, valorTotal_phi_start, phi_accept_valores, valorTotal_phi_accept,
+                    phi_cell_valores, valorTotal_phi_cell, phi_move_valores, valorTotal_phi_move, valorTotal_phi,
+                    phi_start_latex, phi_accept_latex, phi_cell_latex,  phi_move_latex ):
+    outputFile = nombreDeMT+ "_Informacion_total.tex"
+    #outputFile = "tablon_alterado.tex"
+    
+    with codecs.open(outputFile, 'w', "utf-8-sig") as f:
+        #Cosas que importar de manera genérica
+        f.write('\\documentclass[a4paper,10pt]{article}\n')
+        f.write('\\usepackage[utf8]{inputenc}\n')
+        f.write('\\usepackage[spanish,es-tabla]{babel}\n')
+        #márgenes del documento
+        f.write('\\usepackage[top=3cm, bottom=2cm, right=1.5cm, left=3cm]{geometry}\n')
+        f.write('\\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}\n\n')
+        # Definimos el título
+        f.write('\\title{Tablón Alterado}\n')
+        f.write('\\author{'+nombreDeMT+'}\n')
+        f.write('\\date{}\n\n')
+        #comienzo del documento:
+        f.write('\\begin{document}\n')
+        f.write('\\maketitle\n\n')
+
+        ####################  CARACTERISTICAS #####################
+        f.write('\\section{Características de la MT}\n')
+        f.write('En esta sección se analizará las características inherentes de la máquina de Turing introducida. \\newline\n')
+        f.write('\\begin{itemize}\n')
+
         if(noDeterministic):
-            f.write("Es una MT no determinista MTND." + '\n')
+            f.write('\\item Tipo de MT =  MT no determinista (MTND). \n')
         else:
-           f.write("Es una MT determinista." + '\n')
+           f.write('\\item Tipo de MT =  MT determinista (MTD). \n')
+        
         if(stay):
-            f.write("Es una MT con transiciones Stay. Esto quiere decir que a parte de las transiciones a la derecha o a la izquierda, esta MT puede quedarse inmovil." + '\n')
+            f.write('\\item Es una MT con transiciones Stay. Esto quiere decir que a parte de las transiciones a la derecha o a la izquierda, esta MT puede quedarse inmovil.\n')
         else: 
-            f.write("Es una MT sin transiciones Stay. Esto quiere decir solo dispone de las transiciones a la derecha o a la izquierda." + '\n')
-        f.write("Estado Inicial = " + estadoInicial + '\n')
-        f.write("Símbolo blanco = " + blanco + '\n')
-        f.write("Los estados totales son = " + listToStr(estadosTot) + '\n')
-        f.write("Los estados finales son = " + listToStr(estadosFinales) + '\n')
-        f.write("La entrada/palabra que se ha introducido al ejecutar la MT es = \'" + entrada + '\'\n')
+            f.write('\\item Es una MT sin transiciones Stay. Esto quiere decir solo dispone de las transiciones a la derecha o a la izquierda. \n')
+
+        f.write('\\item Estado Inicial =' + estadoInicial+'\n')
+        f.write('\\item Símbolo blanco = ' + blanco + '\n')
+        f.write('\\item La entrada/palabra que se ha introducido al ejecutar la MT es = ( ' + entrada + ' )\n')
+        f.write('\\item Los estados totales son =' + listToStr(estadosTot) +' \n')
+        f.write('\\item Los estados finales son =' + listToStr(estadosFinales)+' \n')
+
+        f.write('\\end{itemize}\n\n')
+
+        ####################  TABLON ###############################
+        f.write('\\section{Tablón final y reglas aplicadas}\n')
+        f.write('\\subsection{Sobre las transiciones o reglas}\n')
+        f.write('En este apartado se mostrarán la función de transición total de la MT junto a las reglas de la función de transición de la MT aplicadas para la creación de la tabla, ordenadas por orden. El formato de cada refla es el siguiente: \\newline\\par \n')
+        f.write('\\fbox{$\\delta$([\\textit{estado actual}],[\\textit{símbolo en el cabezal}]) = ([\\textit{nuevo estado}],[\\textit{nuevo símbolo}],[\\textit{dirección}])} \\newline\\par \n')
+        f.write('La función de transición $\\delta$ está compuesta por las reglas siguientes.\\newline\\newline \n')
+        
+        for t in range(1,len(transitions),1):
+            tran = transicionABonito(transitions[t])
+            f.write(tran + '\\newline\n')
+
+        f.write('\\par \nLas reglas que han sido utilizadas para la creación del tablón son las siguientes.\\newline\\newline \n')
+        for t in reglasEnOrden:
+            tran = transicionABonito(t)
+            f.write(tran + '\\newline\n')
+        
+        f.write('\\subsection{Tablón final}\n')
+        f.write('Una vez aplicadas las reglas expuestas en el apartado anterior, ahora se puede ver el tablón creado a partir de la palabra de entrada '+ entrada+'.\n')
+        f.write('El tablón final en cuestión tiene un tamaño de '+str(n)+'*'+str(n)+'\\newline\\par\n')
+        
+        f.write('\\begin{table}[h]\n')
+        f.write('\\centering\n')
+        eles = crear_eles_tabuladas(n)
+        f.write('\\begin{tabular}{'+eles+'}\n')
+        f.write('\\hline\n')
+        
+        esEstado = re.compile("q[0-9]*")
+        esHastag = re.compile("#")
+        fila_tabla = '\t'
+
+        for i in range(0,n,1):
+            for j in range (0,n,1):
+                celda = tabla[i][j]
+                match = re.fullmatch(esEstado, celda)
+                match_hastag = re.fullmatch(esHastag, celda)
+                if(j < n-1):
+                    if(match):
+                        cont=0
+                        fila_tabla += '$'
+                        for l in celda:
+                            if(cont==0):
+                                fila_tabla += l+'_'
+                            else:
+                                fila_tabla += l
+                            cont +=1
+                        fila_tabla += '$  &   '
+                    elif(match_hastag):
+                        fila_tabla += '\\#' +'  &   '
+                    else:
+                        fila_tabla += celda +'   &   '
+                else:
+                    if(match):
+                        cont=0
+                        fila_tabla += '$'
+                        for l in celda:
+                            if(cont==0):
+                                fila_tabla += l+'_'
+                            else:
+                                fila_tabla += l
+                            cont +=1 
+                        fila_tabla += '$\t'
+                    elif(match_hastag):
+                        fila_tabla += '\\#' + '\t'
+                    else:
+                        fila_tabla += celda + '\t'
+
+            f.write(fila_tabla + '\\\\ \\hline\n')
+            fila_tabla = '\t'
+  
+        f.write('\\end{tabular}\n')
+        f.write('\\end{table}\n')
+        
+        ####################  PHI START ############################
+        f.write('\\section{$\\Phi$ Start}\n')
+        f.write('El valor total de la fórmula $\\Phi$ Start es ')
+        if(valorTotal_phi_start):
+            f.write('\\emph{Verdadero}. Es decir, se cumple el que la primera fila de la tabla debe ser la palabra de entrada junto al estado inicial. \\newline \\newline \n')
+        else:
+            f.write('\\emph{Falso}. Es decir, no se cumple el que la primera fila de la tabla debe ser la palabra de entrada junto al estado inicial. \\newline \\newline \n')
+
+        f.write('La fórmula $\\Phi$ Start generada con la palabra '+ entrada + 'es: \\newline \\newline \n')
+        f.write(phi_start_latex + ' \\newline \\newline \n')
+        f.write('La fórmula $\\Phi$ Start con los valores de verdad asignados es: \\newline \\newline \n')
+        f.write(phi_start_valores+' \\newline \\newline \n')
+
+        ####################  PHI ACCEPT ############################
+        f.write('\\section{$\\Phi$ Accept}\n')
+        f.write('El valor total de la fórmula $\\Phi$ Accept es ')
+        if(valorTotal_phi_accept):
+            f.write('\\emph{Verdadero}. Es decir, se trata de un tablón de aceptación, ya que se encuentra un estado final o de aceptación en el tablón. \\newline \\newline \n')
+        else:
+            f.write('\\emph{Falso}. Es decir, la entrada no ha sido aceptada, no es un tablón de aceptación, no hay estado de aceptación en el tablón. \\newline \\newline \n')
+
+        f.write('La fórmula $\\Phi$ Accept generada con la palabra '+ entrada + 'es: \\newline \\newline \n')
+        f.write(phi_accept_latex + ' \\newline \\newline \n')
+        f.write('La fórmula $\\Phi$ Accept con los valores de verdad asignados es: \\newline \\newline \n')
+        f.write(phi_accept_valores+' \\newline \\newline \n')
+
+        ####################  PHI CELL ##############################
+        f.write('\\section{$\\Phi$ Cell}\n')
+        f.write('El valor total de la fórmula $\\Phi$ Cell es ')
+        if(valorTotal_phi_cell):
+            f.write('\\emph{Verdadero}. Es decir, En el tablón no hay celdas sin contenido o con símbolos no permitidos ni una celda contiene más de un mismo símbolo a la vez. \\newline \\newline \n')
+        else:
+            f.write('\\emph{Falso}. Es decir, En el tablón hay al menos una celda que no es un símbolo del conjunto C, o una celda no contiene ningún valor o una celda contiene más de uun símbolo. \\newline \\newline \n')
+
+        f.write('La fórmula $\\Phi$ Cell generada con la palabra '+ entrada + 'es: \\newline \\newline \n')
+        f.write( phi_cell_latex + ' \\newline \\newline \n')
+        f.write('La fórmula $\\Phi$ Cell con los valores de verdad asignados es: \\newline \\newline \n')
+        f.write(phi_cell_valores+' \\newline \\newline \n')
+
+        ####################  PHI MOVE ##############################
+        f.write('\\section{$\\Phi$ Move}\n')
+        f.write('El valor total de la fórmula $\\Phi$ Move es ')
+        if(valorTotal_phi_move):
+            f.write('\\emph{Verdadero}. Es decir, En el tablón todas las ventanas son legales. \\newline \\newline \n')
+        else:
+            f.write('\\emph{Falso}. Es decir, En el tablón hay al menos una ventana ilegal. \\newline \\newline \n')
+
+        f.write('La fórmula $\\Phi$ Move generada con la palabra '+ entrada + 'es: \\newline \\newline \n')
+        f.write(phi_move_latex + ' \\newline \\newline \n')
+        f.write('La fórmula $\\Phi$ Move con los valores de verdad asignados es: \\newline \\newline \n')
+        f.write(phi_move_valores+' \\newline \\newline \n')
+
+        ####################  PHI MOVE ##############################
+        f.write('\\section{Fórmula $\\Phi$ final}\n')
+        f.write('El valor total de la fórmula $\\Phi$ es ')
+        if(valorTotal_phi):
+            f.write('\\emph{Verdadero}. Es decir, Todas las subfórmulas ($\\Phi$ Start, Accept, Cell y Move) tienen valor verdadero.\n')
+            f.write('Se trata de un tablón correcto y de aceptación. \\newline \\newline \n')
+        else:
+            f.write('\\emph{Falso}. Es decir, Alguna/s (o todas) las subfórmulas ($\\Phi$ Start, Accept, Cell y Move) tienen valor Falso. \\newline \\newline \n')
+
+        f.write('La fórmula $\\Phi$ generada con la palabra '+ entrada + 'es: \\newline \\newline \n')
+        f.write('[\t'+phi_start_latex + '\t]\\newline \\newline \n')
+        f.write('AND \\newline \\newline \n')
+        f.write('[\t'+phi_accept_latex + '\t]\\newline \\newline \n')
+        f.write('AND \\newline \\newline \n')
+        f.write('[\t'+phi_cell_latex + '\t]\\newline \\newline \n')
+        f.write('AND \\newline \\newline \n')
+        f.write('[\t'+phi_move_latex + '\t]\\newline \\newline \n')
+
+        #fin del documento:
+        f.write('\\end{document}\n')
     
     f.close()
-
-def tablonToTxt(nombreDeMT, reglasEnOrden, palabra, tabla, n):
-    outputFile = nombreDeMT + "_Tablon_e_informacion_palabra_"+palabra+".txt"
-    with open(outputFile, 'w') as f:
-        f.write( 'Las reglas que han sido utilizadas en la ejecución de la MT han sido: '+'\n \n')
-        for regla in reglasEnOrden:
-            f.write(listToStr(regla)+'\n')
-        f.write('\n')
-        f.write('Tablón final con la palabra \''+palabra+'\': \n \n')
-        for fila in tabla:
-            f.write(listToStr2(fila)+'\n')
-        f.write('\n')
-        f.write('La tabla final es de tamaño '+str(n)+ 'X'+ str(n)+'\n')
-    
-    f.close()
-
-def phi_startToTxt(nombreDeMT, phi_start, palabra, phi_start_valores, valorTotal_phi_start):
-    outputFile = nombreDeMT + "_phi_start_palabra_\'"+palabra+"\'.txt"
-    with open(outputFile, 'w') as f:
-        f.write('VALOR TOTAL DE LA FÓRMULA = ' + str(valorTotal_phi_start)+'\n')
-        f.write('Fórmula phi_start creada con la palabra \''+palabra+'\': \n\n')
-        f.write(phi_start +'\n\n')
-        f.write('Fórmula phi_start (con los valores asignados) creada con la palabra \''+palabra+'\': \n\n')
-        f.write(phi_start_valores +'\n\n')
-    f.close()
-
-def phi_acceptToTxt(nombreDeMT, phi_accept, palabra, phi_accept_valores, valorTotal_phi_accept):
-    outputFile = nombreDeMT + "_phi_accept_palabra_\'"+palabra+"\'.txt"
-    with open(outputFile, 'w') as f:
-        f.write('VALOR TOTAL DE LA FÓRMULA = ' + str(valorTotal_phi_accept)+'\n')
-        f.write('Fórmula phi_accept creada con la palabra \''+palabra+'\': \n\n')
-        f.write(phi_accept +'\n\n')
-        f.write('Fórmula phi_accept (con los valores asignados) creada con la palabra \''+palabra+'\': \n\n')
-        f.write(phi_accept_valores +'\n\n')
-    f.close()
-
-def phi_cellToTxt(nombreDeMT, phi_cell, palabra, phi_cell_valores, valorTotal_phi_cell):
-    outputFile = nombreDeMT + "_phi_cell_palabra_\'"+palabra+"\'.txt"
-    with open(outputFile, 'w') as f:
-        f.write('VALOR TOTAL DE LA FÓRMULA = ' + str(valorTotal_phi_cell)+'\n')
-        f.write('Fórmula phi_cell creada con la palabra \''+palabra+'\': \n\n')
-        f.write(phi_cell +'\n\n')
-        f.write('Fórmula phi_cell (con los valores asignados) creada con la palabra \''+palabra+'\': \n\n')
-        f.write(phi_cell_valores +'\n\n')
-    f.close()
-
-def phi_moveToTxt(nombreDeMT, phi_move, palabra, phi_move_valores, valorTotal_phi_move):
-    outputFile = nombreDeMT + "_phi_move_palabra_\'"+palabra+"\'.txt"
-    with open(outputFile, 'w') as f:
-        f.write('VALOR TOTAL DE LA FÓRMULA = ' + str(valorTotal_phi_move)+'\n')
-        f.write('Fórmula phi_move creada con la palabra \''+palabra+'\': \n\n')
-        f.write(phi_move +'\n\n')
-        f.write('Fórmula phi_move (con los valores asignados) creada con la palabra \''+palabra+'\': \n\n')
-        f.write(phi_move_valores +'\n\n')
-    f.close()
-
-def phiToTxt(nombreDeMT, phi_start, phi_accept, phi_cell, phi_move , palabra, phi, valorTotal_phi):
-    outputFile = nombreDeMT + "_phi_palabra_\'"+palabra+"\'.txt"
-    with open(outputFile, 'w') as f:
-        f.write('VALOR TOTAL DE LA FÓRMULA = ' + str(valorTotal_phi)+'\n')
-        f.write('Fórmula phi creada con la palabra \''+palabra+'\': \n')
-        f.write('Se expone a trozos para mayor claridad, primero phi_start, luego accept, cell y move al final. \n\n')
-        f.write("[ "+phi_start +' ]\n\n')
-        f.write(' AND \n\n')
-        f.write("[ "+phi_accept +' ]\n\n')
-        f.write(' AND \n\n')
-        f.write("[ "+phi_cell +' ]\n\n')
-        f.write(' AND \n\n')
-        f.write("[ "+phi_move +' ]\n\n\n\n')
-        f.write("FÓRMULA COMPLETA (seguida)=  \n\n")
-        f.write(phi +'\n\n' )
-    f.close()
-

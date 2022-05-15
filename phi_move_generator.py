@@ -8,14 +8,31 @@ from tkinter import E
 ####################################################################################################
 
 def generarLaMisma(fila, filaSiguiente, i):
+    igual_latex=''
     igual=" ( "
     igual_valores=" ( "
     tam = len(fila)
     esLaMisma = True
+    
+    esEstado = re.compile("q[0-9]*")
+    eshastag= re.compile("#")
 
     for index in range(0, tam ,1):
         valor = fila[index]
+        match = re.fullmatch(esEstado, valor)
+        match_hastag = re.fullmatch(eshastag, valor)
         if(index < tam-1):
+            if(match):
+                num_estado = valor[1]
+                igual_latex += "$X_"+str(i)+",_"+str(index+1)+"\\_q_"+num_estado+"$\\ AND\\ "
+                igual_latex += "$X_"+str(i+1)+",_"+str(index+1)+"\\_q_"+num_estado+"$\\ AND\\ "
+            elif(match_hastag):
+                igual_latex += "$X_"+str(i)+",_"+str(index+1)+"\\_\\#$\\ AND\\ "
+                igual_latex += "$X_"+str(i+1)+",_"+str(index+1)+"\\_\\#$\\ AND\\ "
+            else:
+                igual_latex += "$X_"+str(i)+",_"+str(index+1)+"\\_"+valor+"$\\ AND\\ "
+                igual_latex += "$X_"+str(i+1)+",_"+str(index+1)+"\\_"+valor+"$\\ AND\\ "
+
             #fila anterior
             igual += "X_"+str(i)+"_"+str(index+1)+"_"+valor + " AND "
             #la fila siguiente
@@ -36,7 +53,7 @@ def generarLaMisma(fila, filaSiguiente, i):
                 igual_valores += "TRUE AND FALSE )"
                 esLaMisma = False
 
-    return igual, igual_valores, esLaMisma
+    return igual, igual_valores, esLaMisma, igual_latex
 
 #crea la fila tras aplicarle la transicion
 # #todo: falla aqui  
@@ -121,15 +138,32 @@ def generarFilas(fila, transitions, blanco):
 
 
 def generarPosibles(fila, filaSiguiente, transitions, i, j, blanco):
+    valoresFila_latex = ''
     valoresFila=""
     valoresFila_valores = ""
+    posibles_latex=''
     posibles = ""
     posibles_valores = ""
     siHayPosible = False
+
+    esEstado = re.compile("q[0-9]*")
+    eshastag= re.compile("#")
+
     #Los valores de la fila padre (siempre iguales)
     #termina en AND porque se va a unir con los valores posibles que puede tener la otra fila
     for c in range(0,len(fila),1):
         valor = fila[c]
+        match = re.fullmatch(esEstado, valor)
+        match_hastag = re.fullmatch(eshastag, valor)
+        
+        if(match):
+            num_estado = valor[1]
+            valoresFila_latex += "$X_"+str(i)+",_"+str(c+1)+"\\_q_"+num_estado+"$\\ AND\\ "
+        elif(match_hastag):
+            valoresFila_latex += "$X_"+str(i)+",_"+str(c+1)+"\\_\\#$\\ AND\\ "
+        else:
+            valoresFila_latex += "$X_"+str(i)+",_"+str(c+1)+"\\_"+valor+"$\\ AND\\ "
+            
         valoresFila += "X_"+str(i)+"_"+str(c+1)+"_"+valor+ " AND " 
         valoresFila_valores += "TRUE AND "   #siempre tienen valor verdad
 
@@ -140,6 +174,7 @@ def generarPosibles(fila, filaSiguiente, transitions, i, j, blanco):
         for x in range(0,tam,1):
             hay = True
             f = filasPosibles[x]
+            posible_actual_latex = ''
             posible_actual=""
             posible_actual_valores=""
             #comparo la fila siguiente con la posible segun la formula
@@ -151,7 +186,19 @@ def generarPosibles(fila, filaSiguiente, transitions, i, j, blanco):
                 valor = f[c]
                 valorSiguiente = filaSiguiente[c]
 
+                match = re.fullmatch(esEstado, valor)
+                match_hastag = re.fullmatch(eshastag, valor)
+        
                 if(c < tamano -1):
+
+                    if(match):
+                        num_estado = valor[1]
+                        posible_actual_latex += "$X_"+str(j)+",_"+str(c+1)+"\\_q_"+num_estado+"$\\ AND\\ "
+                    elif(match_hastag):
+                        posible_actual_latex += "$X_"+str(j)+",_"+str(c+1)+"\\_\\#$\\ AND\\ "
+                    else:
+                        posible_actual_latex += "$X_"+str(j)+",_"+str(c+1)+"\\_"+valor+"$\\ AND\\ "
+
                     posible_actual += "X_"+str(j)+"_"+str(c+1)+"_"+valor+ " AND " 
                     if(valor == valorSiguiente):
                         posible_actual_valores += "TRUE AND "
@@ -159,6 +206,14 @@ def generarPosibles(fila, filaSiguiente, transitions, i, j, blanco):
                         posible_actual_valores += "FALSE AND "
                         hay = False
                 else:
+                    if(match):
+                        num_estado = valor[1]
+                        posible_actual_latex += "$X_"+str(j)+",_"+str(c+1)+"\\_q_"+num_estado+"$\\ "
+                    elif(match_hastag):
+                        posible_actual_latex += "$X_"+str(j)+",_"+str(c+1)+"\\_\\#$\\ "
+                    else:
+                        posible_actual_latex += "$X_"+str(j)+",_"+str(c+1)+"\\_"+valor+"$\\ "
+
                     posible_actual += "X_"+str(j)+"_"+str(c+1)+"_"+valor + " "
                     if(valor == valorSiguiente):
                         posible_actual_valores += "TRUE "
@@ -167,9 +222,11 @@ def generarPosibles(fila, filaSiguiente, transitions, i, j, blanco):
                         hay = False
         
             if(x < tam-1 ):
+                posibles_latex += "\\ ( " + valoresFila_latex + posible_actual_latex + " )\\ OR\\ "
                 posibles += " ( " + valoresFila + posible_actual + " ) OR "
                 posibles_valores += " ( " + valoresFila_valores + posible_actual_valores + " ) OR "
             else:
+                posibles_latex += "\\ ( " + valoresFila_latex + posible_actual_latex + " )\\ )\\ "
                 posibles +=  " ( " + valoresFila + posible_actual + " ) )"
                 posibles_valores +=  " ( " + valoresFila_valores + posible_actual_valores + " ) )" 
             
@@ -177,12 +234,13 @@ def generarPosibles(fila, filaSiguiente, transitions, i, j, blanco):
                 siHayPosible = True
 
     else:
+        posibles_latex = ''
         posibles = ""
         posibles_valores = ""
     
-    return posibles, posibles_valores, siHayPosible
+    return posibles, posibles_valores, siHayPosible, posibles_latex
 
-def valoresFila(fila, i):
+""" def valoresFila(fila, i):
     tam = len(fila)
     igual = ""
     igual_valores = ""
@@ -192,7 +250,7 @@ def valoresFila(fila, i):
         igual_valores += "TRUE AND  "
 
 
-    return igual, igual_valores
+    return igual, igual_valores """
 
 
 ####################################################################################################
@@ -204,62 +262,62 @@ def generarPhiMove(tabla, n, transitions, blanco):
     #Una fila es legal cuando: tiene un unico estado y cuando es igual que la anterior o se ha llegado a ella a través de una regla de transicion
     #Se hace así porque la MT admite el estado "STAY" y complica las cosas. De esta manera es muy facil.
     #Se ha adaptado la fórmula pero es igual, en vez de ventanas de tamaño 2x3 son de tamaño filax2
+    phi_move_latex='(\\ '
     phi_move=" ( "
     phi_move_valores=" ( "
     valorTotal = True
-    txt = ""
     for i in range(0,n-1,1):
         #comparamos la fila "i" con su siguiente
-        igual, igual_valores, esLaMisma = generarLaMisma(tabla[i], tabla[i+1], i+1)  #en caso de que no se haga transicion
+        igual, igual_valores, esLaMisma, igual_latex = generarLaMisma(tabla[i], tabla[i+1], i+1)  #en caso de que no se haga transicion
 
-        txt += 'Es la misma: ' + str(esLaMisma)
-        txt += igual_valores
-        txt += '\n'
 
-        posibles, posibles_valores, hayPosible = generarPosibles(tabla[i], tabla[i+1], transitions, i+1, i+2, blanco)
+        posibles, posibles_valores, hayPosible, posibles_latex = generarPosibles(tabla[i], tabla[i+1], transitions, i+1, i+2, blanco)
 
-        txt += 'Esta en posibles: ' + str(hayPosible)
-        txt += posibles_valores
-        txt += '\n'
 
         if((not esLaMisma) and (not hayPosible)):
             valorTotal = False
         # el primer caso siempre va a ser el de si las dos filas son iguales
+        phi_move_latex = '(\\ '+ igual_latex
         phi_move += " ( " + igual
         phi_move_valores += " ( " +  igual_valores  
         
         #¿hay transiciones posibles?
         if(posibles == ""): # si no, solo pongo el caso de que sean iguales, lo unico que la hace legal
             if(i < n-2): # porque recorremos las filas dos a dos
+                phi_move_latex = '\\ )\\ AND\\ '
                 phi_move += " ) AND "
                 phi_move_valores +=  " ) AND "
             else:
+                phi_move_latex = '\\ )\\ '
                 phi_move +=  " ) "
                 phi_move_valores +=  " ) "
         else: # si hay transiciones posibles; pongo la fila actual + la posible
             if(i < n-2):
+                phi_move_latex = '\\ OR\\ ' + posibles_latex+ '\\ AND\\ '
                 phi_move += " OR " + posibles + " AND "
                 phi_move_valores += " OR " + posibles_valores + " AND "
             else:
+                phi_move_latex = '\\ OR\\ ' + posibles_latex+ '\\ '
                 phi_move += " OR " + posibles + " "
                 phi_move_valores += " OR " + posibles_valores + " "
 
+    phi_move_latex = '\\ )\\ '
     phi_move += " ) "
     phi_move_valores += " ) "
-    return phi_move, phi_move_valores, valorTotal, txt
+    return phi_move, phi_move_valores, valorTotal, phi_move_latex
 
 
 ###################################################
 ############# para la explicación: ################
 ###################################################
 
-def generarPhi_move_UnaSolo(tabla, n, transitions, i):
+def generarPhi_move_UnaSolo(tabla, n, transitions, i, blanco):
     phi_move_min=" ( "
     phi_move_valores_min=" ( "
     
     #comparamos la fila "i" con su siguiente
-    igual, igual_valores = generarLaMisma(tabla[i-1], tabla[i], i)  #en caso de que no se haga transicion
-    posibles, posibles_valores = generarPosibles(tabla[i-1], tabla[i], transitions, i, i+1)
+    igual, igual_valores, _ = generarLaMisma(tabla[i-1], tabla[i], i)  #en caso de que no se haga transicion
+    posibles, posibles_valores, _ = generarPosibles(tabla[i-1], tabla[i], transitions, i, i+1, blanco)
     # el primer caso siempre va a ser el de si las dos filas son iguales
     phi_move_min += " ( " + igual
     phi_move_valores_min += " ( " +  igual_valores  
