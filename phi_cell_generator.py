@@ -72,8 +72,15 @@ def generarSegundaParte(i,j,valor,valoresPosibles):
             t = valoresPosibles[numNext]
             #print("s = " +s+ " t =" + t + " index = "+ str(index) + " numNext = "+ str(numNext))
             if(t != s):
-                valorS = (s == valor)
-                valorT = (t == valor)
+                if(s == valor):
+                    valorS ='TRUE'
+                else:
+                    valorS ='FALSE'
+
+                if(t == valor):
+                    valorT ='TRUE'
+                else:
+                    valorT ='FALSE'
 
                 if(valorS == valorT == True):
                     #print("Segunda parte: falla con valores i="+str(i)+" j="+str(j)+" valor en la tabla="+valor)
@@ -99,11 +106,11 @@ def generarSegundaParte(i,j,valor,valoresPosibles):
                     t_latex = '\\#'
 
                 if index < tam-2:
-                    segundaParte_latex = '\\={$(X_'+ str(i)+",_"+str(j)+"\\_"+s_latex+')$}\\ OR\\ \\={$(X_'+ str(i)+",_"+str(j)+"\\_"+t_latex+')$}\\ )\\ AND\\ (\\ '
+                    segundaParte_latex += '\\ NOT\\ $(X_'+ str(i)+",_"+str(j)+"\\_"+s_latex+')$\\ OR\\ NOT\\ $(X_'+ str(i)+",_"+str(j)+"\\_"+t_latex+')$\\ )\\ AND\\ (\\ '
                     segundaParte += " NOT ("+ "X_"+ str(i)+"_"+str(j)+"_"+s + ") OR  NOT ( " + "X_"+ str(i)+"_"+str(j)+"_"+ t +")  ) AND ( "
                     segundaParteValor += " NOT ("+ str(valorS) + ") OR  NOT ( " + str(valorT) +")  ) AND ( "
                 else:
-                    segundaParte_latex = '\\={$(X_'+ str(i)+",_"+str(j)+"\\_"+s_latex+')$}\\ OR\\ \\={$(X_'+ str(i)+",_"+str(j)+"\\_"+t_latex+')$}\\ )\\ ]\\ '
+                    segundaParte_latex += '\\ NOT\\ $(X_'+ str(i)+",_"+str(j)+"\\_"+s_latex+')$\\ OR\\ NOT\\ $(X_'+ str(i)+",_"+str(j)+"\\_"+t_latex+')$\\ )\\ ]\\ '
                     segundaParte += " NOT ("+ "X_"+ str(i)+"_"+str(j)+"_"+s + ") OR  NOT ( " + "X_"+ str(i)+"_"+str(j)+"_"+ t +")  ) ]"
                     segundaParteValor += " NOT ("+ str(valorS) + ") OR  NOT ( " + str(valorT) +")  ) ]"
     
