@@ -1,4 +1,7 @@
 import re
+import random
+from string import ascii_letters
+from tkinter import E
 
 ####################################################################################################
 ####################################     PHI_MOVE     ##############################################
@@ -99,6 +102,7 @@ def queHay(fila):
 #    ['estado_actual', 'estado_nuevo', 'simbolo_Actual', 'Nuevo_Simbolo', 'direccion']
 def generarFilas(fila, transitions, blanco):
     filas = []
+    transiciones_usadas = []
     estadoFila, headFila = queHay(fila)
     tam = len(transitions)
     for i in range(1, tam + 1, 1):
@@ -111,8 +115,9 @@ def generarFilas(fila, transitions, blanco):
             direccion = str(t[4])
             f = crearFila(fila, estado_nuevo, nuevo_simbolo, direccion, blanco)
             filas.append(f)
+            transiciones_usadas.append(t)
 
-    return filas
+    return filas, transiciones_usadas
 
 
 def generarPosibles(fila, filaSiguiente, transitions, i, j, blanco):
@@ -128,7 +133,7 @@ def generarPosibles(fila, filaSiguiente, transitions, i, j, blanco):
         valoresFila += "X_"+str(i)+"_"+str(c+1)+"_"+valor+ " AND " 
         valoresFila_valores += "TRUE AND "   #siempre tienen valor verdad
 
-    filasPosibles = generarFilas(fila, transitions, blanco)
+    filasPosibles, _ = generarFilas(fila, transitions, blanco)
     tam = len(filasPosibles)
 
     if(tam != 0):
@@ -277,6 +282,7 @@ def generarPhi_move_UnaSolo(tabla, n, transitions, i):
 ####################################     FUNCIONES VENTANAS :    ###################################
 ####################################################################################################
 
+#FUNCIONA BIEN
 def cogerVentana(tabla, i,j):
     i = i-1
     j = j-1
@@ -296,110 +302,354 @@ def cogerVentana(tabla, i,j):
 
     return fila, ventana
 
+#FUNCIONA BIEN
 def ventanaEsIgual(ventana):
     es = True
+    mensaje = "La ventana es legal porque la primera fila es igual a la segunda."
     fila_1= ventana[0]
     fila_2= ventana[1]
     
     for i in range(0,len(fila_1),1):
         if(fila_1[i] != fila_2[i]):
             es = False
-    return es
+            mensaje = ''
+    return es, mensaje
 
+def simboloProhibido(ventana, simbolosPosibles):
+    mensaje = ''
+    tiene = False
+    
+    for fila in ventana:
+        for celda in fila:
+            if(celda not in simbolosPosibles):
+                tiene = True
+                mensaje = 'Esta ventana es ilegal porque contiene un símbolo ( '+celda+' ) que no pertenece al conjunto C, el de los símbolos permitidos.\n'
+                break
+        if(tiene):
+            break
+
+    return mensaje, tiene
+
+#FUNCIONA BIEN
+def incumpleHastag(ventana):
+    mensaje = ''
+    loIncumple = False
+    fila_1= ventana[0]
+    fila_2= ventana[1]
+    
+    #el hastag va a siempre estar en los bordes de la ventana
+    if(fila_1[0] == '#'):
+        if(fila_2[0] != '#'):
+            mensaje = "En la primera fila, primera columna, hay un hastag y en la segunda fila no está debajo de él."
+            loIncumple = True
+    elif(fila_1[2] == '#'):
+        if(fila_2[2] != '#'):
+            mensaje = "En la primera fila, tercera columna,  hay un hastag y en la segunda fila no está debajo de él."
+            loIncumple = True
+    elif(fila_2[0] == '#'):
+        if(fila_1[0] != '#'):
+            mensaje = "En la segunda fila, primera columna, hay un hastag y en la primera fila no está por encima de él."
+            loIncumple = True
+    elif(fila_2[2] == '#'):
+        if(fila_1[2] != '#'):
+            mensaje = "En la segunda fila, tercera columna, hay un hastag y en la primera fila no está por encima de él."
+            loIncumple = True
+
+    #si tiene el hastag en medio ya te digo yo a ti que es ilegal
+    if(fila_1[1] == '#') and (fila_2[1] == '#'):
+        mensaje = 'No tiene sentido que haya un hastag en las columnas centrales de la primera y senguda fila'
+        loIncumple = True
+    elif(fila_1[1] == '#'):
+        mensaje = 'No tiene sentido que haya un hastag en la columna central de la primera fila'
+        loIncumple = True
+    elif(fila_2[1] == '#'):
+        mensaje = 'No tiene sentido que haya un hastag en la columna central de la segunda fila'
+        loIncumple = True
+        
+
+    return mensaje, loIncumple
+
+#FUNCIONA BIEN
 def ventanaTieneMasDeUno(ventana):
     cont_1 = 0
     cont_2 = 0
     seCumple = False
+    mensaje = ''
     esEstado = re.compile("q[0-9]*")
     fila_1= ventana[0]
     fila_2= ventana[1]
-    for i in range(0,len(fila_1),1):
+    for i in range(0,3,1):
         match = re.fullmatch(esEstado, fila_1[i])
         if(match):
             cont_1 += 1
         match = re.fullmatch(esEstado, fila_2[i])
         if(match):
             cont_2 += 1
-    
+
     if(cont_1 > 1):
         if(cont_2 > 1):
             seCumple = True
-            code = -3
-            return seCumple,code
+            mensaje = "La ventana es ilegal porque hay más de un estado en ambas filas."
+            return seCumple, mensaje
         else:
             seCumple = True
-            code = -1
-            return seCumple,code
+            mensaje = "La ventana es ilegal porque hay más de un estado en la primera fila."
+            return seCumple, mensaje
     elif(cont_2 > 1):
         seCumple = True
-        code = -2
-        return seCumple,code
+        mensaje = "La ventana es ilegal porque hay más de un estado en la segunda fila."
+        return seCumple, mensaje
     
     seCumple = False
-    code = 0
-    return seCumple, code
+    return seCumple,  mensaje
 
+#FUNCIONA BIEN
 def ventanaNoSentido(ventana):
     # tiene estado en el medio de la primera fila y en la segunda no (no esta ni a su derecha ni a su izq ni en la misma posicion)
-    seCumple = True
+    mensaje = ''
+    tieneSentido = False
     fila_1= ventana[0]
     fila_2= ventana[1]
     
     esEstado = re.compile("q[0-9]*")
-    match = re.fullmatch(esEstado, fila_1[1])
-    if(match):
+    match_1 = re.fullmatch(esEstado, fila_1[1])
+    match_2 = re.fullmatch(esEstado, fila_2[1])
+    if(match_1):
         for a in fila_2:    
             match = re.fullmatch(esEstado, a)
             if(match):
-                seCumple = False
+                tieneSentido = True
+        if(not tieneSentido):
+            mensaje = "La ventana es ilegal porque hay un estado en la celda principal de la primera fila y no hay estado en la segunda."
+    elif(match_2): 
+        for a in fila_1:    
+            match = re.fullmatch(esEstado, a)
+            if(match):
+                tieneSentido = True
+        if(not tieneSentido):
+            mensaje = "La ventana es ilegal porque hay un estado en la celda principal de la segunda fila y no hay estado en la primera."
     else:
-        seCumple = False
-        return seCumple
+        tieneSentido = True
     
-    return seCumple
+    return tieneSentido, mensaje
+
 
 def ventanaTransicion(ventana, transiciones, fila, j, blanco): 
-    filasPosibles = generarFilas(fila, transiciones, blanco)
+    filasPosibles, transiciones_utilizadas = generarFilas(fila, transiciones, blanco)
     fila_2 = ventana[1]
-    code = -5 #2 o  si no tiene ninguna-5
-    numPosibles=1
+    mensaje = ''
+    legal = True
+    numPosibles=0
     for fila in filasPosibles:
-        #print('caso numero = '+ str(numPosibles))
         es = True
         cont=0
+        
         for i in range(j,j+3,1):
-            #print('en ventana = '+ str(fila_2[cont]) +' en la fila = ' + str(fila[i-2]))
-            if(fila_2[cont] != fila[i-2]):
+            if(fila_2[cont] != fila[i-1]):
                 es = False
             cont += 1
+            
         if(es):
-            code = 2
-            return code
-        #print('valor de j = '+str(j))
+            t = transiciones_utilizadas[numPosibles]
+            estado_actual = "q" +  str(t[0]) 
+            simbolo_actual = str(t[2])
+            estado_nuevo = "q" + str(t[1])
+            nuevo_simbolo = str(t[3])
+            d = str(t[4])
+            if(d == 'L'):
+                direccion = 'a la izquierda.'
+            elif(d == 'R'):
+                direccion = 'a la derecha.'
+            else:
+                direccion = 'de tipo Stay (no se ha movido el cabezal).'
+
+            legal = True
+            mensaje = "La ventana es legal porque se ha llegado a la segunda desde una regla de transición.\n Concretamente, con estado " + estado_actual +" y símbolo en el cabezal "+ simbolo_actual + " se ha pasado al estado "+ estado_nuevo + " se ha cambiado el símbolo del cabezal por el símbolo " + nuevo_simbolo + " y se ha hecho un movimiento " + direccion
+            break
+
+        else:
+            mensaje = "La ventana es ilegal porque, aunque aparentemente pueda parecer legal, no se ha podido llegar a ella desde ninguna transición."
+            legal = False
+
         numPosibles += 1
-    return code
+    
+    return mensaje, legal
 
-def esLegal(tabla, transiciones, i, j, blanco):
+
+def esLegal(tabla, transiciones, i, j, blanco, simbolosPosibles):
+    """ for i in range(0,n-1,1):
+        for j in range(1,n-1,1):
+            mensaje, legal = esLegal(tablon_alterado, transiciones, i+1, j+1, blanco, simbolosPosibles) """
+
     fila, ventana = cogerVentana(tabla, i, j)
+    legal = True
+    mensaje = ''
 
-    code = 0
-    #  = 1 si es igual
-    if (ventanaEsIgual(ventana)):
-        code = 1
-        return code
-    #  = -1 tiene mas de un estado en la primera fila
-    #  = -2 si es en la segunda
-    #  = -3 si es en las dos
-    seCumple, code = ventanaTieneMasDeUno(ventana)
+    #si es igual
+    es, mensaje = ventanaEsIgual(ventana)
+    if (es):
+        return mensaje, legal
+
+    #ver si tiene un simbolo que no pertenece al tablon.
+    mensaje, tiene = simboloProhibido(ventana, simbolosPosibles)
+    if(tiene):
+        legal = False
+        return mensaje, legal
+
+    #hay varios dos tipos
+    mensaje, loIncumple = incumpleHastag(ventana)
+    if(loIncumple):
+        legal = False
+        return mensaje, legal
+
+    #  tiene mas de un estado en la primera fila
+    #  si es en la segunda
+    #  si es en las dos
+    seCumple,  mensaje = ventanaTieneMasDeUno(ventana)
     if(seCumple):
-        return code
-    #  = -4 tiene estado en el medio de la primera fila y en la segunda no (no esta ni a su derecha ni a su izq ni en la misma posicion)
-    elif(ventanaNoSentido(ventana)):
-        code = -4
-    #  = 2 si por transicion es congruente
-    #  = -5 es incongruente por transicion
-    else:
-        code = ventanaTransicion(ventana, transiciones, fila, j, blanco)
-    return code
+        legal = False
+        return mensaje, legal
+        
+    #tiene estado en el medio de la primera fila y en la segunda no (no esta ni a su derecha ni a su izq ni en la misma posicion)
+    tieneSentido, mensaje = ventanaNoSentido(ventana)
+    if(not tieneSentido):
+        legal = False
+        return mensaje, legal
+    #si por transicion es congruente
+    #es incongruente por transicion
+    mensaje, legal = ventanaTransicion(ventana, transiciones, fila, j-1, blanco)
+
+    return mensaje, legal
+    
+
+
+####################################################################################################
+###############################     FUNCIONES TABLON ILEGAL :    ###################################
+####################################################################################################
+
+def tablonAlterado(tabla, n, blanco, simbolosPosibles, estadosPosibles):
+    tabla_alterada = [[blanco] * n for i in range(n)] #inicializo la tabla todo a simbolos blancos
+    
+    for i in range(0,n,1):  #hago una copia exacta fila a fila
+        tabla_alterada[i] = tabla[i].copy()
+
+    for i in range(0,3,1):
+
+        seed = random.randint(0,4)
+
+        if(seed == 0):  #me cargo phi_start
+            #cambiar primera fila por otra
+            primera_fila = tabla[0]
+            index = random.randint(1,n-1)
+            fila_aleatoria = tabla[index]
+            tabla_alterada[0] = fila_aleatoria
+            tabla_alterada[index] = primera_fila
+
+        elif(seed == 1):   #me cargo phi_cell
+            #poner un simbolo que no es del alfabeto
+            i = random.randint(0,n-1)   #fila celda
+            j = random.randint(0,n-1)   #columna celda
+
+            tabla_alterada = cambiarSimboloNoAlfabeto(tabla_alterada, i, j, simbolosPosibles)
+            
+        elif(seed == 2):
+            #coger una celda y ponerle un simbolo diferente del alfabeto
+            i = random.randint(0,n-1)   #fila celda
+            j = random.randint(0,n-1)   #columna celda
+            
+            tabla_alterada = cambiarSimbolo(tabla_alterada, i, j, simbolosPosibles)
+
+        elif(seed == 3):
+            # quitar un estado que cumpla lo de vantana no tiene sentido
+            tabla_alterada = quitarSentido(tabla_alterada, n, simbolosPosibles)
+
+        else:
+            #poner dos estados juntos
+            tabla_alterada = ponerDosEstados(tabla_alterada, n, estadosPosibles)
+
+    return tabla_alterada
+
+def ponerDosEstados(tabla_alterada, n, estadosPosibles):
+    esEstado = re.compile("q[0-9]*")
+    salir = False
+
+    for i in range(0, n, 1):
+        for celda in range(0, n, 1):
+            match = re.fullmatch(esEstado, tabla_alterada[i][celda])
+            if(match) and (tabla_alterada[i][celda+1] not in estadosPosibles):
+                for e in estadosPosibles:
+                    if(e != tabla_alterada[i][celda]):
+                        tabla_alterada[i][celda+1] = e
+                        salir = True
+                        break
+            if(salir): 
+                break
+        if(salir):
+            break
+    return tabla_alterada
+
+def quitarSentido(tabla_alterada, n, simbolosPosibles):
+    # tiene estado en el medio de la primera fila y en la segunda no (no esta ni a su derecha ni a su izq ni en la misma posicion)
+    esEstado = re.compile("q[0-9]*")
+    salir = False
+    for i in range(0, n-1, 1):
+        fila_1 = tabla_alterada[i]
+        fila_2 = tabla_alterada[i+1]
+
+        for celda in range(0, n, 1):
+            match = re.fullmatch(esEstado, fila_1[celda])
+            if(match):
+                match_2 = re.fullmatch(esEstado, fila_2[celda])
+                if(match_2):
+                    cambiarSimbolo(tabla_alterada, i+1, celda, simbolosPosibles)
+                    salir = True
+                    break
+                match_2 = re.fullmatch(esEstado, fila_2[celda+1])
+                if(match_2):
+                    cambiarSimbolo(tabla_alterada, i+1, celda, simbolosPosibles)
+                    salir = True
+                    break
+                match_2 = re.fullmatch(esEstado, fila_2[celda-1])
+                if(match_2):
+                    cambiarSimbolo(tabla_alterada, i+1, celda, simbolosPosibles)
+                    salir = True
+                    break
+        
+        if(salir):
+            break
+    
+    return tabla_alterada
+
+def cambiarSimboloNoAlfabeto(tabla_alterada, i, j, simbolosPosibles):
+    for letra in ascii_letters:
+        if letra not in simbolosPosibles:
+            tabla_alterada[i][j] = letra
+            break
+    
+    return tabla_alterada
+            
+def cambiarSimbolo(tabla_alterada, i, j, simbolosPosibles):
+    for letra in ascii_letters:
+        if letra in simbolosPosibles and tabla_alterada[i][j] != letra:
+            tabla_alterada[i][j] = letra
+            break
+    
+    return tabla_alterada
+		
+
+def encontrarIlegales(tablon_alterado, n, transiciones, blanco, simbolosPosibles):
+    ilegales = {'ventana':[], 'mensaje':[], 'posicion':[]}
+    for i in range(0,n-1,1):
+        for j in range(1,n-1,1):
+            mensaje, legal = esLegal(tablon_alterado, transiciones, i+1, j+1, blanco, simbolosPosibles)
+            
+            if(not legal):
+                _, ventana = cogerVentana(tablon_alterado, i+1,j+1)
+                ilegales['ventana'].append(ventana)
+                ilegales['mensaje'].append(mensaje)
+                ilegales['posicion'].append((i+1,j+1))
+    
+    return ilegales
+
 
 

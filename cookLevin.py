@@ -4,7 +4,7 @@ import phi_accept_generator
 import phi_cell_generator
 import phi_move_generator
 
-import informationToTxt
+#import informationToTxt
 
 ####################################################################################################
 ##################################      FUNCIONES :     ############################################
@@ -21,7 +21,7 @@ def generarProposicionesPotenciales(tabla, estados, alfabetoCinta):
     i=1 #contador de filas
     j=1 #contador de columnas
     for fila in tabla:
-        for celda in tabla:
+        for celda in fila:
             proposicionesFila = []
             for valor in posiblesValores:
                 proposicion = 'X' +  "_" +str(i) + "_" + str(j) + "_" + valor
@@ -78,7 +78,7 @@ def apply(n, tabla, estados, alfabetoCinta, configuracionInicial, estadosFinales
     print(phi_cell_valores)   """
     
     phi_move, phi_move_valores, valorTotal_phi_move, txt = phi_move_generator.generarPhiMove(tabla, n, transitions, blanco)
-    informationToTxt.depuracion(txt)
+    #informationToTxt.depuracion(txt)
     """ print()
     print("PHI_MOVE:")
     print(phi_move)

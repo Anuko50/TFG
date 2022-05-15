@@ -1,7 +1,7 @@
 from os import system, name
-from platform import java_ver
 import phi_cell_generator
 import phi_move_generator
+import latex_generator
 
 # poner color en el texto para imprimir por pantalla
 def colored(r, g, b, text):
@@ -16,14 +16,20 @@ def clear():
     else:
         _ = system('clear')
 
+    """ def mainMensaje():
+    print(colored(26, 26, 255,'Bienvenido/a/e. Introduce cómo quieres que funcione el programa: '))
+    print(colored(102, 255, 102, '1 : Introducir un archivo .jff o .txt junto a una palabra y ejecutar la MT. ( USO: [MT en .txt o .jff] [entrada de la MT] )'))
+    print(colored(102, 255, 102,'2 : Introducir un .txt con la tabla formateada correctamente, otro con la información de la MT y la palabra de entrada '))
+     """
 def mostrarComandosPosibles():
-    print(colored(102, 255, 102, 'h (o help): muestra este mensaje'))
-    print(colored(102, 255, 102,'q (o quit): termina el programa. '))
-    print(colored(102, 255, 102,'1 : introduciendo un número de fila i y de columna j se mostrará una ventana y se dirá si es legal o no y el por qué.'))
-    print(colored(102, 255, 102,'2 : explicación de phi_start.'))
-    print(colored(102, 255, 102,'3 : explicación de phi_accept.'))
-    print(colored(102, 255, 102,'4 : explicación de phi_cell, introduciendo un numero i (fila) y otro j (columna) de celda.'))
-    print(colored(102, 255, 102,'5 : explicación de phi_move, introduciendo un numero i (fila).'))
+    print(colored(102, 255, 102,'help (h): muestra este mensaje'))
+    print(colored(102, 255, 102,'quit (q): termina el programa. '))
+    print(colored(102, 255, 102,'ventanas (v) : introduciendo un número de fila i y de columna j se mostrará una ventana y se dirá si es legal o no y el por qué.'))
+    print(colored(102, 255, 102,'start (s) : explicación de phi_start.'))
+    print(colored(102, 255, 102,'accept (a) : explicación de phi_accept.'))
+    print(colored(102, 255, 102,'cell (c) : explicación de phi_cell, introduciendo un numero i (fila) y otro j (columna) de celda.'))
+    print(colored(102, 255, 102,'move (m): explicación de phi_move, introduciendo un numero i (fila).'))
+    print(colored(102, 255, 102,'alterado (ta): Se genera un Latex con un tablon alterado aleatoriamente, con sus ventanas ilegales y respectivas formulas phi.'))
     print()
     input('Presiona ENTER para continuar.')
     clear()
@@ -167,7 +173,11 @@ def explicacionPhi_move(tabla, n, transitions, i):
     input('pulsa ENTER para volver al menú principal')
     clear()
 
-def explicacionVentanas(tabla, transiciones, i, j, blanco):
+
+
+
+#TODO: REVISAR el esLegal de ventanas (que solo me devuelva un mensaje es mas comodo)
+def explicacionVentanas(tabla, transiciones, i, j, blanco, simbolosPosibles):
     print(colored(26, 26, 255,'Vamos a analizar la ventana seleccionada.'))
     _, ventana = phi_move_generator.cogerVentana(tabla, i,j)
     fila_1 = ventana[0]
@@ -184,28 +194,16 @@ def explicacionVentanas(tabla, transiciones, i, j, blanco):
     print(colored(255, 255, 0, fila_2))
     print()
 
-    code = phi_move_generator.esLegal(tabla, transiciones, i, j, blanco)
+    mensaje, esLegal = phi_move_generator.esLegal(tabla, transiciones, i, j, blanco, simbolosPosibles)
 
-    if(code == 1):  #  = 1 si es igual
-        print(colored(0, 179, 0, "La ventana es legal porque la primera fila es igual a la segunda."))
-    elif(code == 2): #  = 2 si por transicion es congruente
-        print(colored(0, 179, 0, "La ventana es legal porque se ha llegado a la segunda desde una regla de transición."))
-    elif(code == -1): #  = -1 tiene mas de un estado en la primera fila
-        print(colored(0, 179, 0, "La ventana es ilegal porque hay más de un estado en la primera fila."))
-    elif(code == -2): #  = -2 si es en la segunda
-        print(colored(0, 179, 0, "La ventana es ilegal porque hay más de un estado en la segunda fila."))
-    elif(code == -3):  #  = -3 si es en las dos
-        print(colored(0, 179, 0, "La ventana es ilegal porque hay más de un estado en ambas filas."))
-    elif(code == -4): #  = -4 tiene estado en el medio de la primera fila y en la segunda no (no esta ni a su derecha ni a su izq ni en la misma posicion)
-        print(colored(0, 179, 0, "La ventana es ilegal porque hay un estado en la celda principal de la primera fila y no hay estado en la segunda."))
-    elif(code == -5):     #  = -5 es incongruente por transicion
-        print(colored(0, 179, 0, "La ventana es ilegal porque, aunque aparentemente pueda parecer legal, no se ha podido llegar a ella desde ninguna transición."))
+    print(colored(0, 179, 0, mensaje))
+
     print()
     input('pulsa ENTER para volver al menú principal')
     clear()
 
 
-def mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales, entrada, estados, alfabetoCinta, transitions, blanco):
+def mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales, entrada, estados, alfabetoCinta, transitions, blanco, simbolosPosibles):
     quit = False
     print(colored(0, 179, 0, "Bienvenido/a/e, introduce lo que quieres hacer."))
     print(colored(0, 179, 0, "Para ver las posibles opciones, introduce 'h' (de help): "))
@@ -221,7 +219,7 @@ def mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales
         elif(comando == 'q' or comando == 'quit'):
             print(colored(0,0,255,'¡Adiós!'))
             exit(1)
-        elif(comando == '1'):
+        elif(comando == 'v' or comando == 'ventanas'):
             print(colored(255, 255, 0, 'EXPLICACIÓN VENTANAS'))
             # j debe ser mayor que 1 y menor que n
             # i debe ser menor que n
@@ -240,22 +238,22 @@ def mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales
                 else:
                     correct = True
             clear()
-            explicacionVentanas(tabla, transitions, int(i), int(j), blanco)
-        elif(comando == '2'):
+            explicacionVentanas(tabla, transitions, int(i), int(j), blanco, simbolosPosibles)
+        elif(comando == 's' or comando == 'start'):
             print(colored(255, 255, 0, 'EXPLICACIÓN PHI_START'))
             explicacionPhi_start(phi_start, entrada)
-        elif(comando == '3'):
+        elif(comando == 'a' or comando == 'accept'):
             print(colored(255, 255, 0, 'EXPLICACIÓN PHI_ACCEPT'))
             explicacionPhi_accept(phi_accept, estadosFinales, entrada)
-        elif(comando == '4'):
+        elif(comando == 'c' or comando == 'cell'):
             print(colored(255, 255, 0, 'EXPLICACIÓN PHI_CELL'))
             correct = False
 
             while(not correct):
                 i = input('introduce el número de fila de la celda a analizar: ')
                 j = input('introduce el número de columna de la celda a analizar: ')
-                if((i == '0' or j== '0') or ( int(i) > n or int(j) > n)):
-                    print(colored(255,0,0, 'Has introducido un valor de celda incorrecto, debe ser de 1 hasta n (siendo n el tamaño del tablón).'))
+                if((i == '0' or j== '0') or ( int(i) > n-1 or int(j) > n-1)):
+                    print(colored(255,0,0, 'Has introducido un valor de celda incorrecto, debe ser de 1 hasta n-1 (siendo n el tamaño del tablón).'))
                     print(colored(255,0,0, 'El tamaño del tablón actual es de '+ str(n) + " X "+ str(n)))
                     print(colored(255,0,0, 'Intentalo de nuevo.'))
                 else: 
@@ -263,7 +261,7 @@ def mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales
 
             clear()
             explicacionPhi_Cell(tabla, estados, alfabetoCinta, i, j)
-        elif(comando == '5'):
+        elif(comando == 'm' or comando == 'move'):
             print(colored(255, 255, 0, 'EXPLICACIÓN PHI_MOVE'))
             correct = False
 
@@ -277,5 +275,9 @@ def mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales
                     correct = True
 
             explicacionPhi_move(tabla, n, transitions, i)
+        elif(comando == 'ta' or comando == 'alterado'):
+            print(colored(255, 255, 0, 'CREACION DEL LATEX CON TABLÓN ALTERADO.\n'))
+            print(colored(0, 179, 0, 'El Latex tendrá el nombre de la MT introducida más \'_tablonAlterado\'.'))
+            latex_generator.tablonAlterado()
         else:
             print(colored(255,0,0,'Has introducido un comando invalido, si necesitas ayuda introduce h (help)'))

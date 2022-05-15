@@ -5,8 +5,9 @@ import execute_controller
 import cookLevin
 import turing2utf
 import time
-import informationToTxt
 import explicaciones
+import phi_move_generator
+import latex_generator
 
 
 ####################################################################################################
@@ -124,16 +125,16 @@ def main():
     entrada = sys.argv[2]
 
     #Lo escribo en un fichero de salida:
-    informationToTxt.caracteristicasToTxt(nombreMT, noDeterminista, esStay, estadoInicial, blanco, estadosTotales, estadosFinales, entrada)
+    #informationToTxt.caracteristicasToTxt(nombreMT, noDeterminista, esStay, estadoInicial, blanco, estadosTotales, estadosFinales, entrada)
     # ejecutar la maquina
     n, tabla, reglas_en_orden = execute_controller.controller(config, tape, transitions, noDeterminista)
 
-    if (tabla is not None):
+    """ if (tabla is not None):
         informationToTxt.tablonToTxt(nombreMT, execute_controller.transicionesEnBonito(reglas_en_orden) , entrada, tabla, n)
     else: 
         print(colored(255,0,0, 'No se ha podido crear la tabla debido a que se ha excedido el número máximo de pasos de cálculo.'))
         print(colored(255,0,0, 'Se procede a cerrar el programa.'))
-        sys.exit(1)
+        sys.exit(1) """
 
 
     inicio = time.time()
@@ -145,11 +146,11 @@ def main():
     #Aplicamos Cook-Levin
     phi, phi_start, phi_accept, phi_cell, phi_move, phi_start_valores, phi_accept_valores, phi_cell_valores, phi_move_valores , valorTotal_phi, valorTotal_phi_start, valorTotal_phi_accept, valorTotal_phi_cell, valorTotal_phi_move = cookLevin.apply(n, tabla, estadosTotales, alfabetoCinta, configuracionInicial, estadosFinales, reglas_en_orden, transitions, blanco)
     
-    informationToTxt.phi_startToTxt(nombreMT, phi_start, entrada, phi_start_valores, valorTotal_phi_start)
-    informationToTxt.phi_acceptToTxt(nombreMT, phi_accept, entrada, phi_accept_valores, valorTotal_phi_accept)
-    informationToTxt.phi_cellToTxt(nombreMT, phi_cell, entrada, phi_cell_valores, valorTotal_phi_cell)
-    informationToTxt.phi_moveToTxt(nombreMT, phi_move, entrada, phi_move_valores, valorTotal_phi_move)
-    informationToTxt.phiToTxt(nombreMT, phi_start, phi_accept, phi_cell, phi_move, entrada, phi, valorTotal_phi)
+    #informationToTxt.phi_startToTxt(nombreMT, phi_start, entrada, phi_start_valores, valorTotal_phi_start)
+    #informationToTxt.phi_acceptToTxt(nombreMT, phi_accept, entrada, phi_accept_valores, valorTotal_phi_accept)
+    #informationToTxt.phi_cellToTxt(nombreMT, phi_cell, entrada, phi_cell_valores, valorTotal_phi_cell)
+    #informationToTxt.phi_moveToTxt(nombreMT, phi_move, entrada, phi_move_valores, valorTotal_phi_move)
+    #informationToTxt.phiToTxt(nombreMT, phi_start, phi_accept, phi_cell, phi_move, entrada, phi, valorTotal_phi)
 
     #TODO: TABLON, PHIS (+ SU VALOR), CARACTERISTICAS DE LA MT A .TXT
     # 5º contabilizar si el tiempo de estas máquinas es polinomial
@@ -157,6 +158,31 @@ def main():
     print("\nTIEMPO DE EJECUCIÓN TOTAL: ")
     print(fin - inicio)
     
-    explicaciones.mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales, entrada, estadosTotales, alfabetoCinta, transitions, blanco)
+    
+
+    """ print('\nTransiciones:\n')
+    print(transitions)
+    for i in range(1,len(transitions),1):
+        print(transitions[i])
+    print('\n\n\n') """
+
+    simbolosPosibles = alfabetoCinta + ["#"] + estadosTotales
+    
+    tablon_alterado = phi_move_generator.tablonAlterado(tabla, n, blanco, simbolosPosibles, estadosTotales)
+    """ print('\nTabla alterada:\n')
+    print()
+    for fila in tablon_alterado:
+        print(fila)
+    print('\n\n')
+
+    print('\nTablon:\n')
+    for fila in tabla:
+        print(fila)
+    print('\n\n\n') """
+    
+    #latex_generator.tablonAlterado(nombreMT, tablon_alterado, n, transitions, blanco, simbolosPosibles)
+    
+    
+    explicaciones.mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales, entrada, estadosTotales, alfabetoCinta, transitions, blanco, simbolosPosibles)
    
 main()
