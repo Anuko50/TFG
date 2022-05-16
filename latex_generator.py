@@ -1,7 +1,7 @@
 import re
 import codecs
 import phi_move_generator
-
+import ntpath
 
 #vaya movida de función esta que voy a hacer. VAYA MOVIDA.
 def ponerFormulaEnLatex(formula):
@@ -70,6 +70,7 @@ def  crear_eles_tabuladas(n):
     return eles
 
 def tablonAlterado(nombreDeMT, tablon_alterado, n, transiciones, blanco, simbolosPosibles):
+
     outputFile = nombreDeMT+ "_tablon_alterado.tex"
     #outputFile = "tablon_alterado.tex"
     
@@ -83,7 +84,8 @@ def tablonAlterado(nombreDeMT, tablon_alterado, n, transiciones, blanco, simbolo
         f.write('\\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}\n\n')
         # Definimos el título
         f.write('\\title{Tablón Alterado}\n')
-        f.write('\\author{'+nombreDeMT+'}\n')
+        name = ntpath.basename(nombreDeMT)
+        f.write('\\author{'+name+'}\n')
         f.write('\\date{}\n\n')
         #comienzo del documento:
         f.write('\\begin{document}\n')
@@ -279,7 +281,9 @@ def generarLatexInfo(nombreDeMT, noDeterministic, stay, estadoInicial, blanco, e
                     tabla, n, phi_start_valores, valorTotal_phi_start, phi_accept_valores, valorTotal_phi_accept,
                     phi_cell_valores, valorTotal_phi_cell, phi_move_valores, valorTotal_phi_move, valorTotal_phi,
                     phi_start_latex, phi_accept_latex, phi_cell_latex,  phi_move_latex ):
-    outputFile = nombreDeMT+ "_Informacion_total.tex"
+    
+    
+    outputFile = nombreDeMT+'_'+entrada+"_Informacion_total.tex"
     #outputFile = "tablon_alterado.tex"
     
     with codecs.open(outputFile, 'w', "utf-8-sig") as f:
@@ -291,8 +295,9 @@ def generarLatexInfo(nombreDeMT, noDeterministic, stay, estadoInicial, blanco, e
         f.write('\\usepackage[top=3cm, bottom=2cm, right=1.5cm, left=3cm]{geometry}\n')
         f.write('\\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}\n\n')
         # Definimos el título
-        f.write('\\title{Tablón Alterado}\n')
-        f.write('\\author{'+nombreDeMT+'}\n')
+        f.write('\\title{Información total sobre la reducción.}\n')
+        name = ntpath.basename(nombreDeMT)
+        f.write('\\author{'+name+'}\n')
         f.write('\\date{}\n\n')
         #comienzo del documento:
         f.write('\\begin{document}\n')
