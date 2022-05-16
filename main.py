@@ -186,6 +186,9 @@ def main():
     phi_cell_valores, valorTotal_phi_cell, phi_move_valores, valorTotal_phi_move, valorTotal_phi,
     phi_start_latex, phi_accept_latex, phi_cell_latex,  phi_move_latex  )
 
+    print(phi_move)
+    print()
+    print(phi_move_latex)
     explicaciones.mainloop(phi_start, phi_accept, phi_cell, phi_move, tabla, n, estadosFinales, entrada, estadosTotales, alfabetoCinta, 
     transitions, blanco, simbolosPosibles , nombreMT, tablon_alterado, transitions)
    

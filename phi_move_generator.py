@@ -8,7 +8,7 @@ from tkinter import E
 ####################################################################################################
 
 def generarLaMisma(fila, filaSiguiente, i):
-    igual_latex=''
+    igual_latex='\\ (\\ '
     igual=" ( "
     igual_valores=" ( "
     tam = len(fila)
@@ -43,10 +43,22 @@ def generarLaMisma(fila, filaSiguiente, i):
                 igual_valores += "TRUE AND FALSE AND "
                 esLaMisma = False
         else:
+            if(match):
+                num_estado = valor[1]
+                igual_latex += "$X_"+str(i)+",_"+str(index+1)+"\\_q_"+num_estado+"$\\ AND\\ "
+                igual_latex += "$X_"+str(i+1)+",_"+str(index+1)+"\\_q_"+num_estado+"$\\ )\\ "
+            elif(match_hastag):
+                igual_latex += "$X_"+str(i)+",_"+str(index+1)+"\\_\\#$\\ AND\\ "
+                igual_latex += "$X_"+str(i+1)+",_"+str(index+1)+"\\_\\#$\\ )\\ "
+            else:
+                igual_latex += "$X_"+str(i)+",_"+str(index+1)+"\\_"+valor+"$\\ AND\\ "
+                igual_latex += "$X_"+str(i+1)+",_"+str(index+1)+"\\_"+valor+"$\\ )\\ "
+
             #fila anterior
             igual += "X_"+str(i)+"_"+str(index+1)+"_"+valor + " AND "
             #la fila siguiente
             igual += "X_"+str(i+1)+"_"+str(index+1)+"_"+valor + " ) "
+            
             if(fila[index] == filaSiguiente[index]):
                 igual_valores += "TRUE AND TRUE )"
             else:
@@ -61,6 +73,7 @@ def crearFila(fila, estado_nuevo, nuevo_simbolo, direccion, blanco):
     tamano = len(fila)
     filaNueva= ['0'] * tamano
     esEstado = re.compile("q[0-9]*")
+
     for i in range(0,tamano,1):
         match = re.fullmatch(esEstado, fila[i])
         if(match):
@@ -179,9 +192,7 @@ def generarPosibles(fila, filaSiguiente, transitions, i, j, blanco):
             posible_actual_valores=""
             #comparo la fila siguiente con la posible segun la formula
             tamano = len(f)
-            """ print(f)
-            print(filaSiguiente)
-            print() """
+
             for c in range(0, tamano,1):
                 valor = f[c]
                 valorSiguiente = filaSiguiente[c]
@@ -200,6 +211,7 @@ def generarPosibles(fila, filaSiguiente, transitions, i, j, blanco):
                         posible_actual_latex += "$X_"+str(j)+",_"+str(c+1)+"\\_"+valor+"$\\ AND\\ "
 
                     posible_actual += "X_"+str(j)+"_"+str(c+1)+"_"+valor+ " AND " 
+
                     if(valor == valorSiguiente):
                         posible_actual_valores += "TRUE AND "
                     else:
@@ -277,31 +289,31 @@ def generarPhiMove(tabla, n, transitions, blanco):
         if((not esLaMisma) and (not hayPosible)):
             valorTotal = False
         # el primer caso siempre va a ser el de si las dos filas son iguales
-        phi_move_latex = '(\\ '+ igual_latex
+        phi_move_latex += '(\\ '+ igual_latex
         phi_move += " ( " + igual
         phi_move_valores += " ( " +  igual_valores  
         
         #¿hay transiciones posibles?
         if(posibles == ""): # si no, solo pongo el caso de que sean iguales, lo unico que la hace legal
             if(i < n-2): # porque recorremos las filas dos a dos
-                phi_move_latex = '\\ )\\ AND\\ '
+                phi_move_latex += '\\ )\\ AND\\ '
                 phi_move += " ) AND "
                 phi_move_valores +=  " ) AND "
             else:
-                phi_move_latex = '\\ )\\ '
+                phi_move_latex += '\\ )\\ '
                 phi_move +=  " ) "
                 phi_move_valores +=  " ) "
         else: # si hay transiciones posibles; pongo la fila actual + la posible
             if(i < n-2):
-                phi_move_latex = '\\ OR\\ ' + posibles_latex+ '\\ AND\\ '
+                phi_move_latex += '\\ OR\\ ' + posibles_latex+ '\\ AND\\ '
                 phi_move += " OR " + posibles + " AND "
                 phi_move_valores += " OR " + posibles_valores + " AND "
             else:
-                phi_move_latex = '\\ OR\\ ' + posibles_latex+ '\\ '
+                phi_move_latex += '\\ OR\\ ' + posibles_latex+ '\\ '
                 phi_move += " OR " + posibles + " "
                 phi_move_valores += " OR " + posibles_valores + " "
 
-    phi_move_latex = '\\ )\\ '
+    phi_move_latex += '\\ )\\ '
     phi_move += " ) "
     phi_move_valores += " ) "
     return phi_move, phi_move_valores, valorTotal, phi_move_latex
@@ -340,7 +352,7 @@ def generarPhi_move_UnaSolo(tabla, n, transitions, i, blanco):
 ####################################     FUNCIONES VENTANAS :    ###################################
 ####################################################################################################
 
-#FUNCIONA BIEN
+
 def cogerVentana(tabla, i,j):
     i = i-1
     j = j-1
@@ -360,7 +372,7 @@ def cogerVentana(tabla, i,j):
 
     return fila, ventana
 
-#FUNCIONA BIEN
+
 def ventanaEsIgual(ventana):
     es = True
     mensaje = "La ventana es legal porque la primera fila es igual a la segunda."
@@ -388,7 +400,7 @@ def simboloProhibido(ventana, simbolosPosibles):
 
     return mensaje, tiene
 
-#FUNCIONA BIEN
+
 def incumpleHastag(ventana):
     mensaje = ''
     loIncumple = False
@@ -427,7 +439,7 @@ def incumpleHastag(ventana):
 
     return mensaje, loIncumple
 
-#FUNCIONA BIEN
+
 def ventanaTieneMasDeUno(ventana):
     cont_1 = 0
     cont_2 = 0
@@ -461,7 +473,7 @@ def ventanaTieneMasDeUno(ventana):
     seCumple = False
     return seCumple,  mensaje
 
-#FUNCIONA BIEN
+
 def ventanaNoSentido(ventana):
     # tiene estado en el medio de la primera fila y en la segunda no (no esta ni a su derecha ni a su izq ni en la misma posicion)
     mensaje = ''
