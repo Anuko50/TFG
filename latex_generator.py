@@ -83,7 +83,7 @@ def tablonAlterado(nombreDeMT, tablon_alterado, n, transiciones, blanco, simbolo
         # Definimos el título
         f.write('\\title{Tablón Alterado}\n')
         name = ntpath.basename(nombreDeMT)
-        f.write('\\author{'+name+'}\n')
+        f.write('\\author{$'+name+'$}\n')
         f.write('\\date{}\n\n')
         #comienzo del documento:
         f.write('\\begin{document}\n')
