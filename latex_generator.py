@@ -36,12 +36,16 @@ def ponerFormulaEnLatex(formula):
 
 #solo si la lista es de strings
 def listToStr(list):
-    str =  " ".join(list)
+    str=''
+    for x in range(0,len(list), 1):
+        num = list[x][1]
+        if(x < len(list)-1):
+            str += '$q_'+num+'$, '
+        else:
+            str += '$q_'+num+'$ '
+    
     return str
 
-def listToStr2(list):
-    str = "  ".join(list)
-    return str
 
 def transicionABonito(t):
     transicion_bonita = ''
@@ -50,14 +54,8 @@ def transicionABonito(t):
     estado_nuevo = '$q_' + str(t[1]) +'$'
     nuevo_simbolo = str(t[3])
     d = str(t[4])
-    if(d == 'L'):
-        direccion = 'Izquierda'
-    elif(d == 'R'):
-        direccion = 'Derecha'
-    else:
-        direccion = 'Stay'
 
-    transicion_bonita = '$\\delta$('+estado_actual+','+simbolo_actual+') = ('+estado_nuevo+','+nuevo_simbolo+','+direccion+')'
+    transicion_bonita = '$\\delta$('+estado_actual+','+simbolo_actual+') = ('+estado_nuevo+','+nuevo_simbolo+','+d+')'
     return transicion_bonita
 ##################################################################
 ################ LATEX DEL TABLON ALTERADO #######################
@@ -277,10 +275,11 @@ def tablonAlterado(nombreDeMT, tablon_alterado, n, transiciones, blanco, simbolo
 ################### LATEX CON TODA LA INFO #######################
 ##################################################################
 
-def generarLatexInfo(nombreDeMT, noDeterministic, stay, estadoInicial, blanco, estadosTot, estadosFinales, entrada, transitions, reglasEnOrden, 
-                    tabla, n, phi_start_valores, valorTotal_phi_start, phi_accept_valores, valorTotal_phi_accept,
-                    phi_cell_valores, valorTotal_phi_cell, phi_move_valores, valorTotal_phi_move, valorTotal_phi,
-                    phi_start_latex, phi_accept_latex, phi_cell_latex,  phi_move_latex ):
+def generarLatexInfo(nombreDeMT, noDeterministic, stay, estadoInicial, blanco, estadosTot, estadosFinales, 
+                    entrada, transitions, reglasEnOrden,tabla, n, 
+                    valorTotal_phi_start,  valorTotal_phi_accept, valorTotal_phi_cell, valorTotal_phi_move, valorTotal_phi,
+                    phi_start_latex, phi_accept_latex, phi_cell_latex,  phi_move_latex,
+                    phi_start_valores_latex, phi_accept_valores_latex, phi_cell_valores_latex, phi_move_valores_latex ):
     
     
     outputFile = nombreDeMT+'_'+entrada+"_Informacion_total.tex"
@@ -295,9 +294,9 @@ def generarLatexInfo(nombreDeMT, noDeterministic, stay, estadoInicial, blanco, e
         f.write('\\usepackage[top=3cm, bottom=2cm, right=1.5cm, left=3cm]{geometry}\n')
         f.write('\\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}\n\n')
         # Definimos el título
-        f.write('\\title{Información total sobre la reducción.}\n')
         name = ntpath.basename(nombreDeMT)
-        f.write('\\author{'+name+'}\n')
+        f.write('\\title{$'+name+'$}\n')
+        f.write('\\author{}\n')
         f.write('\\date{}\n\n')
         #comienzo del documento:
         f.write('\\begin{document}\n')
@@ -320,9 +319,9 @@ def generarLatexInfo(nombreDeMT, noDeterministic, stay, estadoInicial, blanco, e
 
         f.write('\\item Estado Inicial =' + estadoInicial+'\n')
         f.write('\\item Símbolo blanco = ' + blanco + '\n')
-        f.write('\\item La entrada/palabra que se ha introducido al ejecutar la MT es = ( ' + entrada + ' )\n')
-        f.write('\\item Los estados totales son =' + listToStr(estadosTot) +' \n')
-        f.write('\\item Los estados finales son =' + listToStr(estadosFinales)+' \n')
+        f.write('\\item La entrada/palabra que se ha introducido al ejecutar la MT es = \\emph' + entrada + ' \n')
+        f.write('\\item Los estados totales son = \\{' + listToStr(estadosTot) +'\\} \n')
+        f.write('\\item Los estados finales son = \\{' + listToStr(estadosFinales)+'\\} \n')
 
         f.write('\\end{itemize}\n\n')
 
@@ -333,15 +332,23 @@ def generarLatexInfo(nombreDeMT, noDeterministic, stay, estadoInicial, blanco, e
         f.write('\\fbox{$\\delta$([\\textit{estado actual}],[\\textit{símbolo en el cabezal}]) = ([\\textit{nuevo estado}],[\\textit{nuevo símbolo}],[\\textit{dirección}])} \\newline\\par \n')
         f.write('La función de transición $\\delta$ está compuesta por las reglas siguientes.\\newline\\newline \n')
         
+        f.write('\\begin{flushright}')
+        f.write('$\\delta$ = \\{')
         for t in range(1,len(transitions),1):
             tran = transicionABonito(transitions[t])
-            f.write(tran + '\\newline\n')
+            if(t< len(transitions)-1):
+                f.write(tran + ', \\newline\n')
+            else:
+                f.write(tran + '\\}\\newline\n')
+        f.write('\\end{flushright}')    
 
         f.write('\\par \nLas reglas que han sido utilizadas para la creación del tablón son las siguientes.\\newline\\newline \n')
+        f.write('\\begin{flushright}')
         for t in reglasEnOrden:
             tran = transicionABonito(t)
             f.write(tran + '\\newline\n')
-        
+        f.write('\\end{flushright}')    
+
         f.write('\\subsection{Tablón final}\n')
         f.write('Una vez aplicadas las reglas expuestas en el apartado anterior, ahora se puede ver el tablón creado a partir de la palabra de entrada '+ entrada+'.\n')
         f.write('El tablón final en cuestión tiene un tamaño de '+str(n)+'*'+str(n)+'\\newline\\par\n')
@@ -402,14 +409,14 @@ def generarLatexInfo(nombreDeMT, noDeterministic, stay, estadoInicial, blanco, e
         f.write('\\section{$\\Phi$ Start}\n')
         f.write('El valor total de la fórmula $\\Phi$ Start es ')
         if(valorTotal_phi_start):
-            f.write('\\emph{Verdadero}. Es decir, se cumple el que la primera fila de la tabla debe ser la palabra de entrada junto al estado inicial. \\newline \\newline \n')
+            f.write('\\emph{Verdadero}. Es decir, se cumple el que el estado inicial esté justo a la izquierda de la cadena indicando que el cabezal de lectura/escritura está apuntando al primer símbolo. \\newline \\newline \n')
         else:
-            f.write('\\emph{Falso}. Es decir, no se cumple el que la primera fila de la tabla debe ser la palabra de entrada junto al estado inicial. \\newline \\newline \n')
+            f.write('\\emph{Falso}. Es decir, no se cumple el que el estado inicial esté justo a la izquierda de la cadena indicando que el cabezal de lectura/escritura está apuntando al primer símbolo. \\newline \\newline \n')
 
         f.write('La fórmula $\\Phi$ Start generada con la palabra '+ entrada + 'es: \\newline \\newline \n')
         f.write(phi_start_latex + ' \\newline \\newline \n')
         f.write('La fórmula $\\Phi$ Start con los valores de verdad asignados es: \\newline \\newline \n')
-        f.write(phi_start_valores+' \\newline \\newline \n')
+        f.write(phi_start_valores_latex+' \\newline \\newline \n')
 
         ####################  PHI ACCEPT ############################
         f.write('\\section{$\\Phi$ Accept}\n')
@@ -422,7 +429,7 @@ def generarLatexInfo(nombreDeMT, noDeterministic, stay, estadoInicial, blanco, e
         f.write('La fórmula $\\Phi$ Accept generada con la palabra '+ entrada + 'es: \\newline \\newline \n')
         f.write(phi_accept_latex + ' \\newline \\newline \n')
         f.write('La fórmula $\\Phi$ Accept con los valores de verdad asignados es: \\newline \\newline \n')
-        f.write(phi_accept_valores+' \\newline \\newline \n')
+        f.write(phi_accept_valores_latex+' \\newline \\newline \n')
 
         ####################  PHI CELL ##############################
         f.write('\\section{$\\Phi$ Cell}\n')
@@ -435,7 +442,7 @@ def generarLatexInfo(nombreDeMT, noDeterministic, stay, estadoInicial, blanco, e
         f.write('La fórmula $\\Phi$ Cell generada con la palabra '+ entrada + 'es: \\newline \\newline \n')
         f.write( phi_cell_latex + ' \\newline \\newline \n')
         f.write('La fórmula $\\Phi$ Cell con los valores de verdad asignados es: \\newline \\newline \n')
-        f.write(phi_cell_valores+' \\newline \\newline \n')
+        f.write(phi_cell_valores_latex+' \\newline \\newline \n')
 
         ####################  PHI MOVE ##############################
         f.write('\\section{$\\Phi$ Move}\n')
@@ -448,7 +455,7 @@ def generarLatexInfo(nombreDeMT, noDeterministic, stay, estadoInicial, blanco, e
         f.write('La fórmula $\\Phi$ Move generada con la palabra '+ entrada + 'es: \\newline \\newline \n')
         f.write(phi_move_latex + ' \\newline \\newline \n')
         f.write('La fórmula $\\Phi$ Move con los valores de verdad asignados es: \\newline \\newline \n')
-        f.write(phi_move_valores+' \\newline \\newline \n')
+        f.write(phi_move_valores_latex+' \\newline \\newline \n')
 
         ####################  PHI MOVE ##############################
         f.write('\\section{Fórmula $\\Phi$ final}\n')

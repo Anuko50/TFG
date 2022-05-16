@@ -7,6 +7,7 @@ import re
 def generarPhiStart(n, tabla, proposicionesPotenciales, configuracionInicial):
     phi_start_latex=''
     phiStart=""
+    phi_start_valores_latex = ''
     phiStart_valores=""
     valorTotal = True
 
@@ -19,11 +20,11 @@ def generarPhiStart(n, tabla, proposicionesPotenciales, configuracionInicial):
         if(j < n-1):
             if(match):
                 num_estado = configuracionInicial[j][1]
-                phi_start_latex += "$X_1,_"+ str(j+1)+"\\_q_"+num_estado+"$\\ AND\\ "
+                phi_start_latex += "$X_1,_"+ str(j+1)+"\\_q_"+num_estado+"$\\ $\\wedge$\\ "
             elif(match_hastag):
-                phi_start_latex += "$X_1,_"+ str(j+1)+"\\_\\"+configuracionInicial[j]+"$\\ AND\\ "
+                phi_start_latex += "$X_1,_"+ str(j+1)+"\\_\\"+configuracionInicial[j]+"$\\ $\\wedge$\\ "
             else:
-                phi_start_latex += "$X_1,_"+ str(j+1)+"\\_"+configuracionInicial[j]+"$\\ AND\\ "
+                phi_start_latex += "$X_1,_"+ str(j+1)+"\\_"+configuracionInicial[j]+"$\\ $\\wedge$\\ "
 
             phiStart += "X_1_"+ str(j+1)+"_"+configuracionInicial[j]+" AND "
         else:
@@ -40,15 +41,19 @@ def generarPhiStart(n, tabla, proposicionesPotenciales, configuracionInicial):
     for j in range(0,n,1):
         if(j < n-1):
             if(configuracionInicial[j] == tabla[0][j]):
-                phiStart_valores += "TRUE AND "
+                phi_start_valores_latex += "True $\\wedge$\\ "
+                phiStart_valores += "True AND "
             else:
-                phiStart_valores += "FALSE AND "
+                phi_start_valores_latex += "False $\\wedge$\\ "
+                phiStart_valores += "False AND "
                 valorTotal = False
         else:
             if(configuracionInicial[j] == tabla[0][j]):
-                phiStart_valores += "TRUE "
+                phi_start_valores_latex += "True "
+                phiStart_valores += "True "
             else:
-                phiStart_valores += "FALSE "
+                phi_start_valores_latex += "False "
+                phiStart_valores += "False "
                 valorTotal = False
 
-    return phiStart, phiStart_valores, valorTotal, phi_start_latex
+    return phiStart, phiStart_valores, valorTotal, phi_start_latex, phi_start_valores_latex

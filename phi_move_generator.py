@@ -10,6 +10,7 @@ from tkinter import E
 def generarLaMisma(fila, filaSiguiente, i):
     igual_latex='\\ (\\ '
     igual=" ( "
+    igual_valores_latex = '\\ (\\ '
     igual_valores=" ( "
     tam = len(fila)
     esLaMisma = True
@@ -24,34 +25,36 @@ def generarLaMisma(fila, filaSiguiente, i):
         if(index < tam-1):
             if(match):
                 num_estado = valor[1]
-                igual_latex += "$X_"+str(i)+",_"+str(index+1)+"\\_q_"+num_estado+"$\\ AND\\ "
-                igual_latex += "$X_"+str(i+1)+",_"+str(index+1)+"\\_q_"+num_estado+"$\\ AND\\ "
+                igual_latex += "$X_"+str(i)+",_"+str(index+1)+"\\_q_"+num_estado+"$\\ $\\wedge$\\ "
+                igual_latex += "$X_"+str(i+1)+",_"+str(index+1)+"\\_q_"+num_estado+"$\\ $\\wedge$\\ "
             elif(match_hastag):
-                igual_latex += "$X_"+str(i)+",_"+str(index+1)+"\\_\\#$\\ AND\\ "
-                igual_latex += "$X_"+str(i+1)+",_"+str(index+1)+"\\_\\#$\\ AND\\ "
+                igual_latex += "$X_"+str(i)+",_"+str(index+1)+"\\_\\#$\\ $\\wedge$\\ "
+                igual_latex += "$X_"+str(i+1)+",_"+str(index+1)+"\\_\\#$\\ $\\wedge$\\ "
             else:
-                igual_latex += "$X_"+str(i)+",_"+str(index+1)+"\\_"+valor+"$\\ AND\\ "
-                igual_latex += "$X_"+str(i+1)+",_"+str(index+1)+"\\_"+valor+"$\\ AND\\ "
+                igual_latex += "$X_"+str(i)+",_"+str(index+1)+"\\_"+valor+"$\\ $\\wedge$\\ "
+                igual_latex += "$X_"+str(i+1)+",_"+str(index+1)+"\\_"+valor+"$\\ $\\wedge$\\ "
 
             #fila anterior
             igual += "X_"+str(i)+"_"+str(index+1)+"_"+valor + " AND "
             #la fila siguiente
             igual += "X_"+str(i+1)+"_"+str(index+1)+"_"+valor + " AND "
             if(fila[index] == filaSiguiente[index]):
-                igual_valores += "TRUE AND TRUE AND "
+                igual_valores_latex+= "True $\\wedge$\\ True $\\wedge$\\ "
+                igual_valores += "True AND True AND "
             else:
-                igual_valores += "TRUE AND FALSE AND "
+                igual_valores_latex+= "True $\\wedge$\\ False $\\wedge$\\ "
+                igual_valores += "True AND False AND "
                 esLaMisma = False
         else:
             if(match):
                 num_estado = valor[1]
-                igual_latex += "$X_"+str(i)+",_"+str(index+1)+"\\_q_"+num_estado+"$\\ AND\\ "
+                igual_latex += "$X_"+str(i)+",_"+str(index+1)+"\\_q_"+num_estado+"$\\ $\\wedge$\\ "
                 igual_latex += "$X_"+str(i+1)+",_"+str(index+1)+"\\_q_"+num_estado+"$\\ )\\ "
             elif(match_hastag):
-                igual_latex += "$X_"+str(i)+",_"+str(index+1)+"\\_\\#$\\ AND\\ "
+                igual_latex += "$X_"+str(i)+",_"+str(index+1)+"\\_\\#$\\ $\\wedge$\\ "
                 igual_latex += "$X_"+str(i+1)+",_"+str(index+1)+"\\_\\#$\\ )\\ "
             else:
-                igual_latex += "$X_"+str(i)+",_"+str(index+1)+"\\_"+valor+"$\\ AND\\ "
+                igual_latex += "$X_"+str(i)+",_"+str(index+1)+"\\_"+valor+"$\\ $\\wedge$\\ "
                 igual_latex += "$X_"+str(i+1)+",_"+str(index+1)+"\\_"+valor+"$\\ )\\ "
 
             #fila anterior
@@ -60,12 +63,14 @@ def generarLaMisma(fila, filaSiguiente, i):
             igual += "X_"+str(i+1)+"_"+str(index+1)+"_"+valor + " ) "
             
             if(fila[index] == filaSiguiente[index]):
-                igual_valores += "TRUE AND TRUE )"
+                igual_valores_latex+= "True $\\wedge$\\ True )\\ "
+                igual_valores += "True AND True )"
             else:
-                igual_valores += "TRUE AND FALSE )"
+                igual_valores_latex+= "True $\\wedge$\\ False )\\ "
+                igual_valores += "True AND False )"
                 esLaMisma = False
 
-    return igual, igual_valores, esLaMisma, igual_latex
+    return igual, igual_valores, esLaMisma, igual_latex, igual_valores_latex
 
 #crea la fila tras aplicarle la transicion
 # #todo: falla aqui  
@@ -152,9 +157,12 @@ def generarFilas(fila, transitions, blanco):
 
 def generarPosibles(fila, filaSiguiente, transitions, i, j, blanco):
     valoresFila_latex = ''
+    valoresFila_valores_latex = ''
     valoresFila=""
     valoresFila_valores = ""
+
     posibles_latex=''
+    posibles_valores_latex = ''
     posibles = ""
     posibles_valores = ""
     siHayPosible = False
@@ -171,14 +179,15 @@ def generarPosibles(fila, filaSiguiente, transitions, i, j, blanco):
         
         if(match):
             num_estado = valor[1]
-            valoresFila_latex += "$X_"+str(i)+",_"+str(c+1)+"\\_q_"+num_estado+"$\\ AND\\ "
+            valoresFila_latex += "$X_"+str(i)+",_"+str(c+1)+"\\_q_"+num_estado+"$\\ $\\wedge$\\ "
         elif(match_hastag):
-            valoresFila_latex += "$X_"+str(i)+",_"+str(c+1)+"\\_\\#$\\ AND\\ "
+            valoresFila_latex += "$X_"+str(i)+",_"+str(c+1)+"\\_\\#$\\ $\\wedge$\\ "
         else:
-            valoresFila_latex += "$X_"+str(i)+",_"+str(c+1)+"\\_"+valor+"$\\ AND\\ "
+            valoresFila_latex += "$X_"+str(i)+",_"+str(c+1)+"\\_"+valor+"$\\ $\\wedge$\\ "
             
         valoresFila += "X_"+str(i)+"_"+str(c+1)+"_"+valor+ " AND " 
-        valoresFila_valores += "TRUE AND "   #siempre tienen valor verdad
+        valoresFila_valores_latex+= "True\\ $\\wedge$\\ "
+        valoresFila_valores += "True AND "   #siempre tienen valor verdad
 
     filasPosibles, _ = generarFilas(fila, transitions, blanco)
     tam = len(filasPosibles)
@@ -189,6 +198,7 @@ def generarPosibles(fila, filaSiguiente, transitions, i, j, blanco):
             f = filasPosibles[x]
             posible_actual_latex = ''
             posible_actual=""
+            posible_actual_valores_latex = ''
             posible_actual_valores=""
             #comparo la fila siguiente con la posible segun la formula
             tamano = len(f)
@@ -204,18 +214,20 @@ def generarPosibles(fila, filaSiguiente, transitions, i, j, blanco):
 
                     if(match):
                         num_estado = valor[1]
-                        posible_actual_latex += "$X_"+str(j)+",_"+str(c+1)+"\\_q_"+num_estado+"$\\ AND\\ "
+                        posible_actual_latex += "$X_"+str(j)+",_"+str(c+1)+"\\_q_"+num_estado+"$\\ $\\wedge$\\ "
                     elif(match_hastag):
-                        posible_actual_latex += "$X_"+str(j)+",_"+str(c+1)+"\\_\\#$\\ AND\\ "
+                        posible_actual_latex += "$X_"+str(j)+",_"+str(c+1)+"\\_\\#$\\ $\\wedge$\\ "
                     else:
-                        posible_actual_latex += "$X_"+str(j)+",_"+str(c+1)+"\\_"+valor+"$\\ AND\\ "
+                        posible_actual_latex += "$X_"+str(j)+",_"+str(c+1)+"\\_"+valor+"$\\ $\\wedge$\\ "
 
                     posible_actual += "X_"+str(j)+"_"+str(c+1)+"_"+valor+ " AND " 
 
                     if(valor == valorSiguiente):
-                        posible_actual_valores += "TRUE AND "
+                        posible_actual_valores_latex += "True\\ $\\wedge$\\ "
+                        posible_actual_valores += "True AND "
                     else:
-                        posible_actual_valores += "FALSE AND "
+                        posible_actual_valores_latex += "False\\ $\\wedge$\\ "
+                        posible_actual_valores += "False AND "
                         hay = False
                 else:
                     if(match):
@@ -228,18 +240,22 @@ def generarPosibles(fila, filaSiguiente, transitions, i, j, blanco):
 
                     posible_actual += "X_"+str(j)+"_"+str(c+1)+"_"+valor + " "
                     if(valor == valorSiguiente):
-                        posible_actual_valores += "TRUE "
+                        posible_actual_valores_latex += "True\\ "
+                        posible_actual_valores += "True "
                     else:
-                        posible_actual_valores += "FALSE  "
+                        posible_actual_valores_latex += "False\\ "
+                        posible_actual_valores += "False  "
                         hay = False
         
             if(x < tam-1 ):
-                posibles_latex += "\\ ( " + valoresFila_latex + posible_actual_latex + " )\\ OR\\ "
+                posibles_latex += "\\ ( " + valoresFila_latex + posible_actual_latex + " )\\ $\\vee$\\ "
                 posibles += " ( " + valoresFila + posible_actual + " ) OR "
+                posibles_valores_latex+= "\\ ( " + valoresFila_valores_latex + posible_actual_valores_latex + " )\\ $\\vee$\\ "
                 posibles_valores += " ( " + valoresFila_valores + posible_actual_valores + " ) OR "
             else:
                 posibles_latex += "\\ ( " + valoresFila_latex + posible_actual_latex + " )\\ )\\ "
                 posibles +=  " ( " + valoresFila + posible_actual + " ) )"
+                posibles_valores_latex+= "\\ ( " + valoresFila_valores_latex + posible_actual_valores_latex + " )\\ )\\ "
                 posibles_valores +=  " ( " + valoresFila_valores + posible_actual_valores + " ) )" 
             
             if(hay):
@@ -248,9 +264,10 @@ def generarPosibles(fila, filaSiguiente, transitions, i, j, blanco):
     else:
         posibles_latex = ''
         posibles = ""
+        posibles_valores_latex=''
         posibles_valores = ""
     
-    return posibles, posibles_valores, siHayPosible, posibles_latex
+    return posibles, posibles_valores, siHayPosible, posibles_latex, posibles_valores_latex
 
 """ def valoresFila(fila, i):
     tam = len(fila)
@@ -259,7 +276,7 @@ def generarPosibles(fila, filaSiguiente, transitions, i, j, blanco):
     for index in range(0, tam ,1):
         valor = fila[index]
         igual += "X_"+str(i)+"_"+str(index+1)+"_"+valor + " AND "
-        igual_valores += "TRUE AND  "
+        igual_valores += "True AND  "
 
 
     return igual, igual_valores """
@@ -276,14 +293,15 @@ def generarPhiMove(tabla, n, transitions, blanco):
     #Se ha adaptado la fórmula pero es igual, en vez de ventanas de tamaño 2x3 son de tamaño filax2
     phi_move_latex='(\\ '
     phi_move=" ( "
+    phi_move_valores_latex ='(\\ '
     phi_move_valores=" ( "
     valorTotal = True
     for i in range(0,n-1,1):
         #comparamos la fila "i" con su siguiente
-        igual, igual_valores, esLaMisma, igual_latex = generarLaMisma(tabla[i], tabla[i+1], i+1)  #en caso de que no se haga transicion
+        igual, igual_valores, esLaMisma, igual_latex, igual_valores_latex = generarLaMisma(tabla[i], tabla[i+1], i+1)  #en caso de que no se haga transicion
 
 
-        posibles, posibles_valores, hayPosible, posibles_latex = generarPosibles(tabla[i], tabla[i+1], transitions, i+1, i+2, blanco)
+        posibles, posibles_valores, hayPosible, posibles_latex, posibles_valores_latex = generarPosibles(tabla[i], tabla[i+1], transitions, i+1, i+2, blanco)
 
 
         if((not esLaMisma) and (not hayPosible)):
@@ -291,32 +309,39 @@ def generarPhiMove(tabla, n, transitions, blanco):
         # el primer caso siempre va a ser el de si las dos filas son iguales
         phi_move_latex += '(\\ '+ igual_latex
         phi_move += " ( " + igual
+        phi_move_valores_latex+= '(\\ '+ igual_valores_latex
         phi_move_valores += " ( " +  igual_valores  
         
         #¿hay transiciones posibles?
         if(posibles == ""): # si no, solo pongo el caso de que sean iguales, lo unico que la hace legal
             if(i < n-2): # porque recorremos las filas dos a dos
-                phi_move_latex += '\\ )\\ AND\\ '
+                phi_move_latex += '\\ )\\ $\\wedge$\\ '
                 phi_move += " ) AND "
+                phi_move_valores_latex += '\\ )\\ $\\wedge$\\ '
                 phi_move_valores +=  " ) AND "
             else:
                 phi_move_latex += '\\ )\\ '
                 phi_move +=  " ) "
+                phi_move_valores_latex += '\\ )\\ '
                 phi_move_valores +=  " ) "
         else: # si hay transiciones posibles; pongo la fila actual + la posible
             if(i < n-2):
-                phi_move_latex += '\\ OR\\ ' + posibles_latex+ '\\ AND\\ '
+                phi_move_latex += '\\ $\\vee$\\ ' + posibles_latex+ '\\ $\\wedge$\\ '
                 phi_move += " OR " + posibles + " AND "
+                phi_move_valores_latex += '\\ $\\vee$\\ ' + posibles_valores_latex+ '\\ $\\wedge$\\ '
                 phi_move_valores += " OR " + posibles_valores + " AND "
             else:
-                phi_move_latex += '\\ OR\\ ' + posibles_latex+ '\\ '
+                phi_move_latex += '\\ $\\vee$\\ ' + posibles_latex+ '\\ '
                 phi_move += " OR " + posibles + " "
+                phi_move_valores_latex += '\\ $\\vee$\\ ' + posibles_valores_latex+ '\\ '
                 phi_move_valores += " OR " + posibles_valores + " "
 
     phi_move_latex += '\\ )\\ '
     phi_move += " ) "
+    phi_move_valores_latex  += '\\ )\\ '
     phi_move_valores += " ) "
-    return phi_move, phi_move_valores, valorTotal, phi_move_latex
+
+    return phi_move, phi_move_valores, valorTotal, phi_move_latex, phi_move_valores_latex
 
 
 ###################################################

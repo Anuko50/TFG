@@ -29,32 +29,37 @@ def generarPhiAccept(tabla, estadosFinales, n):
     tam = len(literalesFinales)
     loCumple = False
     phi_accept_latex = ''
-    fi_Accept=""
-    fi_Accept_valores=""
+    phi_accept_valores_latex = ''
+    phi_Accept=""
+    phi_Accept_valores=""
 
     for i in range(0,tam,1):
         if(i< tam-1):
-            phi_accept_latex += literalesFinales_latex[i]+'\\ OR\\ '
-            fi_Accept += literalesFinales[i] + ' OR '
+            phi_accept_latex += literalesFinales_latex[i]+'\\ $\\vee$\\ '
+            phi_Accept += literalesFinales[i] + ' OR '
         else:
             phi_accept_latex += literalesFinales_latex[i]
-            fi_Accept += literalesFinales[i]
+            phi_Accept += literalesFinales[i]
     
     for i in range(0,n,1):
         for j in range(0,n,1):
             celda = tabla[i][j]
             if((j == i) and (j == n-1)):
                 if(loContiene(estadosFinales, celda)):
-                    fi_Accept_valores += 'TRUE '
+                    phi_accept_valores_latex += 'True\\ '
+                    phi_Accept_valores += 'True '
                     loCumple = True
                 else:
-                    fi_Accept_valores += 'FALSE '
+                    phi_accept_valores_latex += 'False\\ '
+                    phi_Accept_valores += 'False '
             else:
                 if(loContiene(estadosFinales, celda)):
-                    fi_Accept_valores += 'TRUE OR '
+                    phi_accept_valores_latex += 'True\\ $\\vee$\\ '
+                    phi_Accept_valores += 'True OR '
                     loCumple = True
                 else:
-                    fi_Accept_valores += 'FALSE OR '
+                    phi_accept_valores_latex += 'False\\ $\\vee$\\ '
+                    phi_Accept_valores += 'False OR '
 
-    return fi_Accept, fi_Accept_valores, loCumple, phi_accept_latex
+    return phi_Accept, phi_Accept_valores, loCumple, phi_accept_latex, phi_accept_valores_latex
 
