@@ -353,8 +353,8 @@ def generarPhi_move_UnaSolo(tabla, n, transitions, i, blanco):
     phi_move_valores_min=" ( "
     
     #comparamos la fila "i" con su siguiente
-    igual, igual_valores, _ = generarLaMisma(tabla[i-1], tabla[i], i)  #en caso de que no se haga transicion
-    posibles, posibles_valores, _ = generarPosibles(tabla[i-1], tabla[i], transitions, i, i+1, blanco)
+    igual, igual_valores, _, _, _ = generarLaMisma(tabla[i-1], tabla[i], i)  #en caso de que no se haga transicion
+    posibles, posibles_valores, _, _, _ = generarPosibles(tabla[i-1], tabla[i], transitions, i, i+1, blanco)
     # el primer caso siempre va a ser el de si las dos filas son iguales
     phi_move_min += " ( " + igual
     phi_move_valores_min += " ( " +  igual_valores  

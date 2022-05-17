@@ -168,12 +168,12 @@ def generarPhiCell_soloUna(tabla, estados, alfabetoCinta, i, j):
     phi_cell_min_valores = "[ "
     valoresPosibles = estados + alfabetoCinta + ["#"]    #conjunto de valores posibles (en la nomenclatura de la asignatura se llama "C")
     
-    primeraParte, primeraParteValor, estaBien = generarPrimeraParte(i+1,j+1,tabla[i][j],valoresPosibles)
+    primeraParte, primeraParteValor, _, _, _ = generarPrimeraParte(i+1,j+1,tabla[i][j],valoresPosibles)
     #print("PRIMERA PARTE DE LA FORMULA, ESTABIEN = " + str(estaBien))
     phi_cell_min += primeraParte + " AND "
     phi_cell_min_valores += primeraParteValor + " AND "
 
-    segundaParte, segundaParteValor, estaBien = generarSegundaParte(i+1,j+1,tabla[i][j],valoresPosibles)
+    segundaParte, segundaParteValor, _, _, _= generarSegundaParte(i+1,j+1,tabla[i][j],valoresPosibles)
     #print("SEGUNDA PARTE DE LA FORMULA, ESTABIEN = " + str(estaBien))
 
     phi_cell_min += segundaParte  + " ]"
