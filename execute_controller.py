@@ -158,26 +158,19 @@ def controller(config, tape, transitions, noDeterminista):
     codigo = 0
     
     if(noDeterminista):
-        print("se procede a ejecutar la MTND (no determinista)")
+        #print("se procede a ejecutar la MTND (no determinista)")
         codigo = execute_MTND.execute(config, tape, transitions, filas_tabla, reglas_utilizadas_en_orden)
     else:
-        print("se procede a ejecutar la MTD (determinista)")
+        #print("se procede a ejecutar la MTD (determinista)")
         codigo = execute_MT.machine(config, tape, transitions, filas_tabla, reglas_utilizadas_en_orden) 
 
-    if(codigo == -2):
-        print("No se mostrará la tabla ya que la ejecución ha sido interrumpida por looping")
-        return None, None
+    if(codigo < 0):
+        return None, None, None, codigo
     else:
         blanco = config[3][0]   # simbolo blanco que se va a utilizar
         tabla , n = crearTabla(filas_tabla, blanco)
-        """ print("\nTABLA: \n")
-        for i in range(0,n,1):
-            print(tabla[i]) """
-        """
-        print("\nREGLAS: \n")
-        print(reglas_utilizadas_en_orden)
-        print() """
+        
     
-        return n, tabla, reglas_utilizadas_en_orden
+        return n, tabla, reglas_utilizadas_en_orden, codigo
     
     

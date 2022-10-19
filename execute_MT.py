@@ -9,7 +9,7 @@ def get_tapes(tapes, config):
     valide_value = valide_value + config[3]
     for i in tapes:
         if i not in valide_value:
-            print ("-3: Valor insertado en la cinta incorreto")
+            print ("Valor insertado en la cinta incorreto")
             print('Valores de entrada válidos: ')
             print(valide_value)
             return -3
@@ -42,7 +42,7 @@ def machine(config, tapes, transitions, filas_tabla, reglas_utilizadas_en_orden)
         
         # Se ha encontrado el estado final
         if (q[0]['current_state'] in config[6]):
-            print ("0: Computación terminada y aceptada.")
+            print ("Computación terminada y aceptada.")
             #Hay que introducir la fila de aceptación
             filaTabla = execute_controller.crearFilaTabla(tape, setting)
             filas_tabla.append(filaTabla)
@@ -50,12 +50,11 @@ def machine(config, tapes, transitions, filas_tabla, reglas_utilizadas_en_orden)
             
         # La máquina se ha quedado en un bucle
         if (q[0]['counter'] == 0):
-            #print (setting)
             while True:
                 x = input("Máquina alcanzo 500 transiciones. Desea continuar? (s - Si | n - No): ")
                 
                 if(x == 'n'):
-                    print ("-2: Computacion no terminada. (interrumpida por looping)")
+                    print ("Computacion no terminada. (interrumpida por looping)")
                     return -2
                 
                 elif(x == 's'):
@@ -103,12 +102,6 @@ def machine(config, tapes, transitions, filas_tabla, reglas_utilizadas_en_orden)
                     "counter": q[0]['counter'] - 1
                 }
 
-                
-                
-                #print(transitions[i])
-                #print(setting)
-                #print(setting.get("head_tape"))
-                #print('FILA DE LA TABLA= '+filaTabla)
                 q.append(new_setting) # Se inserta al final de la cinta
                 filaTabla = execute_controller.crearFilaTabla(tape, setting)
                 filas_tabla.append(filaTabla)
@@ -118,8 +111,7 @@ def machine(config, tapes, transitions, filas_tabla, reglas_utilizadas_en_orden)
         
         # Cerró todas las opciones posibles y no encontró ningún estado final
         if (len(q) == 1): # q solo tiene q[0]
-            print ("-1: Computación terminada y rechazada.")
-            #print (setting)
+            print ("Computación terminada y rechazada.")
             return -1
         
         # Configura máquina para próximo estado

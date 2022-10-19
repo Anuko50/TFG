@@ -19,8 +19,6 @@ def read_file(file_name):
     config = {}
     transition = {}
     aux = 0
-    """ file_name = sys.argv[1]
-    file_name = str(file_name) """
 
     try:
         file = open(file_name, 'r')
@@ -69,7 +67,6 @@ def main():
         
     #ver que tipo de entrada se trata:
     #si debo, pasar de MT en jflap a texto 
-    print(str(sys.argv[1]))
     c=str(sys.argv[1])
     esMT = re.compile("(.*)(\.jff)")
     validez = re.compile("(.*)(\.jff|\.txt)")
@@ -92,28 +89,14 @@ def main():
         name = str(sys.argv[1])
 
 
-
-    # 2º ejecutarla para sacar la tabla
-    """ valores de config:
-    # linea 1: alfabeto de entrada
-    # linea 2: alfabeto de la cinta
-    # linea 3: simbolo que representa un espacio en blanco en la cinta
-    # linea 4: conjunto de estados totales
-    # linea 5: estado inicial
-    # linea 6: conjunto de estados finales
-    # linea 7: cantidad de fitas """
-
-    """ valores de transitions:
-    ['estado_actual', 'estado_nuevo', 'simbolo_Actual', 'Nuevo_Simbolo', 'direccion']  """
-    
+    # ejecutarla para sacar la tabla
     config = {}
     transitions = {}
     tape = []
     config, transitions = read_file(name)
     tape = read_tapes()
-    # 3º volcar cada configuración intermedia desde la inicial hasta la final en el tablón.
 
-
+    # volcar cada configuración intermedia desde la inicial hasta la final en el tablón.
     #CARACTERISTICAS DE LA MT: 
     # nombre, determinista o no, stay o no, estadoInicial, Blanco, estadosTot, estadosFinales y la entrada
     noDeterminista = execute_controller.isNonDeterministic(transitions, config)
@@ -124,61 +107,34 @@ def main():
     estadosFinales = execute_controller.estadosEnBonito(config[6])
     entrada = sys.argv[2]
 
-    #Lo escribo en un fichero de salida:
-    #informationToTxt.caracteristicasToTxt(nombreMT, noDeterminista, esStay, estadoInicial, blanco, estadosTotales, estadosFinales, entrada)
     # ejecutar la maquina
-    n, tabla, reglas_en_orden = execute_controller.controller(config, tape, transitions, noDeterminista)
+    n, tabla, reglas_en_orden, codigo = execute_controller.controller(config, tape, transitions, noDeterminista)
 
-    """ if (tabla is not None):
-        informationToTxt.tablonToTxt(nombreMT, execute_controller.transicionesEnBonito(reglas_en_orden) , entrada, tabla, n)
-    else: 
-        print(colored(255,0,0, 'No se ha podido crear la tabla debido a que se ha excedido el número máximo de pasos de cálculo.'))
-        print(colored(255,0,0, 'Se procede a cerrar el programa.'))
-        sys.exit(1) """
+    if(codigo == -2):
+        print("No se ha podido realizar la reducción, ejecución interrumpida por looping.")
+        exit()
+    elif(codigo == -3):
+        print("No se ha podido realizar la reducción, entrada incorrecta.")
+        exit()
 
 
     inicio = time.time()
-    # 4º aplicar algoritmo de Cook-Levin
+    #  aplicar algoritmo de Cook-Levin
     configuracionInicial = execute_controller.crearConfiguracionInicial(sys.argv[2], config[5][0], n, config[3][0])
     alfabetoCinta = config[2]
-    #print(configuracionInicial)
-    #print("\n APLICACION DE COOK-LEVIN:")
-    #Aplicamos Cook-Levin
+
     phi, phi_start, phi_accept, phi_cell, phi_move, phi_start_valores, phi_accept_valores, phi_cell_valores, phi_move_valores , valorTotal_phi, valorTotal_phi_start, valorTotal_phi_accept, valorTotal_phi_cell, valorTotal_phi_move, phi_start_latex, phi_accept_latex, phi_cell_latex,  phi_move_latex,  phi_start_valores_latex, phi_accept_valores_latex, phi_cell_valores_latex, phi_move_valores_latex = cookLevin.apply(n, tabla, estadosTotales, alfabetoCinta, configuracionInicial, estadosFinales, reglas_en_orden, transitions, blanco)
     
-    #informationToTxt.phi_startToTxt(nombreMT, phi_start, entrada, phi_start_valores, valorTotal_phi_start)
-    #informationToTxt.phi_acceptToTxt(nombreMT, phi_accept, entrada, phi_accept_valores, valorTotal_phi_accept)
-    #informationToTxt.phi_cellToTxt(nombreMT, phi_cell, entrada, phi_cell_valores, valorTotal_phi_cell)
-    #informationToTxt.phi_moveToTxt(nombreMT, phi_move, entrada, phi_move_valores, valorTotal_phi_move)
-    #informationToTxt.phiToTxt(nombreMT, phi_start, phi_accept, phi_cell, phi_move, entrada, phi, valorTotal_phi)
 
-    #TODO: TABLON, PHIS (+ SU VALOR), CARACTERISTICAS DE LA MT A .TXT
-    # 5º contabilizar si el tiempo de estas máquinas es polinomial
     fin = time.time()
     print("\nTIEMPO DE EJECUCIÓN TOTAL: ")
     print(fin - inicio)
     
     
 
-    """ print('\nTransiciones:\n')
-    print(transitions)
-    for i in range(1,len(transitions),1):
-        print(transitions[i])
-    print('\n\n\n') """
-
     simbolosPosibles = alfabetoCinta + ["#"] + estadosTotales
     
     tablon_alterado = phi_move_generator.tablonAlterado(tabla, n, blanco, simbolosPosibles, estadosTotales)
-    """ print('\nTabla alterada:\n')
-    print()
-    for fila in tablon_alterado:
-        print(fila)
-    print('\n\n')"""
-
-    """print('\nTablon:\n')
-    for fila in tabla:
-        print(fila)
-    print('\n\n\n')  """
     
     #latex_generator.tablonAlterado(nombreMT, tablon_alterado, n, transitions, blanco, simbolosPosibles)
     latex_generator.generarLatexInfo(nombreMT, noDeterminista, esStay, estadoInicial, blanco, estadosTotales, 

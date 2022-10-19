@@ -188,10 +188,3 @@ class Jflap2Utfpr(object):
         
 
         
-""" 
-if __name__ == "__main__":
-	if len(sys.argv) != 3:
-		print("Parametros insuficientes. USO: nombre de archivo de entrada y nombre de archivo de salida")
-		sys.exit(1)
-	converter = Jflap2Utfpr()
-	converter.convert(sys.argv[1], sys.argv[2]) """
